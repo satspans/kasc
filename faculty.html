@@ -275,23 +275,40 @@ async function saveAttendance(){
 }
 
 // Send SMS to parents for absentees
-function sendParentSMS() {
+async function sendParentSMS() {
     const smsContainer = document.getElementById("smsLinks");
     smsContainer.innerHTML = "";
 
+    // Filter absentees from attendanceData
     const absentees = attendanceData.filter(s => s.status === "Absent");
+
     if (absentees.length === 0) {
         smsContainer.innerHTML = "<p>No absent students.</p>";
         return;
     }
 
-    // Collect all parent numbers
-    const parentNumbers = absentees.map(s => s.ParentsNumber).join(",");
+    // Fetch parents' phone numbers from Supabase
+    const { data: parentsData, error } = await supabaseclient
+        .from("StudentDB")
+        .select("ParentsPhNo")
+        .in("Rollno", absentees.map(s => s.Rollno)); // get only absentees
 
-    // Prepare a single message with all absent students
-    const message = `Dear Parent, your child was absent today. Absent students: ${absentees.map(s => `${s.Name} (Roll No: ${s.Rollno})`).join(", ")}.`;
+    if (error || !parentsData || parentsData.length === 0) {
+        alert("Failed to fetch parents' phone numbers.");
+        return;
+    }
 
-    // Create a single SMS link
+    // Collect phone numbers into a single comma-separated string
+    const parentNumbers = parentsData.map(p => p.ParentsPhNo).join(",");
+
+    // Get faculty info (assuming stored in sessionStorage)
+    const Faculty_Name = sessionStorage.getItem("FacultyName") || "Faculty";
+    const Faculty_Department = sessionStorage.getItem("FacultyDepartment") || "Department";
+
+    // Generate single SMS message
+    const message = `Dear Parent, your child was absent today. - ${Faculty_Name}, ${Faculty_Department}, Kongunadu Arts and Science College`;
+
+    // Create a single clickable SMS link
     const smsLink = document.createElement("a");
     smsLink.href = `sms:${parentNumbers}?body=${encodeURIComponent(message)}`;
     smsLink.textContent = "Send SMS to all absent students' parents";
@@ -300,6 +317,7 @@ function sendParentSMS() {
 
     smsContainer.appendChild(smsLink);
 }
+
 
 </script>
 
