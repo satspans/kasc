@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Core – Amazon UX Animated</title>
+<title>Admin Core – Faculty Management</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -14,7 +14,6 @@
   --text:#ffffff;
   --muted:#b0b7bd;
   --accent:#f6ff00;
-  --accent-hover:#ffffff;
   --danger:#ff0000;
   --radius:12px;
 }
@@ -32,37 +31,49 @@ body{
   display:grid;
   grid-template-columns:240px 1fr;
   min-height:100vh;
+  transition: all 0.3s ease;
 }
 
-/* SIDEBAR */
+/* ===== SIDEBAR ===== */
 .sidebar{
   background:#131921;
   padding:28px 20px;
   border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  transition: transform 0.3s ease;
 }
-
 .brand{
   font-size:22px;
   font-weight:800;
   color:var(--accent);
   margin-bottom:40px;
 }
-
 .nav a{
   display:block;
   padding:14px 18px;
   border-radius:8px;
   color:var(--muted);
   text-decoration:none;
+  margin-bottom:6px;
 }
-
 .nav a.active,
 .nav a:hover{
   background:var(--panel-soft);
   color:#fff;
 }
 
-/* HEADER */
+/* ===== OVERLAY for mobile ===== */
+.overlay{
+  position: fixed;
+  inset:0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  z-index: 999;
+}
+.overlay.show { display: block; }
+
+/* ===== HEADER ===== */
 .header{
   position:sticky;
   top:0;
@@ -72,22 +83,22 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  flex-wrap:wrap;
   z-index:5;
 }
-
 .header h1{font-size:30px}
+.header button{margin-top:8px;}
 
-/* CONTENT */
+/* ===== CONTENT ===== */
 .content{padding:40px}
 
-/* CONTROLS */
+/* ===== CONTROLS ===== */
 .controls{
   display:flex;
   gap:12px;
   flex-wrap:wrap;
   margin-bottom:20px;
 }
-
 .controls input,
 .controls select{
   padding:12px;
@@ -95,14 +106,14 @@ body{
   border:1px solid var(--border);
   border-radius:8px;
   color:#fff;
+  flex:1;
 }
 
-/* TABLE */
+/* ===== TABLE ===== */
 .table-wrapper{
   display:grid;
   gap:14px;
 }
-
 .table-row{
   background:var(--panel);
   border:1px solid var(--border);
@@ -114,21 +125,18 @@ body{
   align-items:center;
   animation:rowIn .4s ease forwards;
 }
-
 @keyframes rowIn{
   from{opacity:0;transform:translateY(10px)}
   to{opacity:1;transform:translateY(0)}
 }
-
 .table-row:hover{
   border-color:var(--accent);
   transform:translateY(-2px);
 }
-
 .cell-title{font-size:11px;color:var(--muted)}
 .cell-value{font-size:15px}
 
-/* BUTTONS */
+/* ===== BUTTONS ===== */
 .action-btn{
   background:var(--accent);
   border:none;
@@ -138,13 +146,12 @@ body{
   font-weight:700;
   cursor:pointer;
 }
-
 .action-btn.danger{
   background:var(--danger);
   color:#fff;
 }
 
-/* MODAL */
+/* ===== MODAL ===== */
 .modal-overlay{
   position:fixed;
   inset:0;
@@ -153,16 +160,22 @@ body{
   align-items:center;
   justify-content:center;
   z-index:100;
+}#menuToggle{
+  display:none;
+  font-size:24px;
+  background:none;
+  border:none;
+  color:var(--accent);
+  cursor:pointer;
 }
-
 .modal{
   width:520px;
+  max-width:95%;
   background:var(--bg);
   border:1px solid var(--border);
   border-radius:14px;
   padding:30px;
 }
-
 .modal label{font-size:12px;color:var(--muted)}
 .modal input,.modal select{
   width:100%;
@@ -173,31 +186,53 @@ body{
   border-radius:8px;
   color:#fff;
 }
-
 .modal-actions{
   display:flex;
   gap:12px;
+  flex-wrap:wrap;
 }
 
-/* RESPONSIVE */
+/* ===== RESPONSIVE ===== */
+@media(max-width:1200px){
+  #menuToggle{display:inline-block;}
+  body{grid-template-columns:1fr;}
+  .sidebar{
+    position:fixed; top:0; left:0; height:100vh; z-index:1000; transform:translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar.show{transform:translateX(0);}
+}
 @media(max-width:900px){
-  body{grid-template-columns:1fr}
-  .sidebar{display:none}
+  .header{padding:16px 20px;}
+  .header h1{font-size:22px;}
+  .controls input, .controls select{flex:1 1 100%;}
+  .table-row{grid-template-columns:1fr; display:flex; flex-direction:column; padding:10px;}
+  .table-row > div{padding:4px 0; width:100%;}
+  .cell-title{display:block;}
+}
+@media(max-width:450px){
+  .header{flex-direction:column; align-items:flex-start; gap:10px;}
+  .action-btn{width:100%; padding:12px; margin-top:4px;}
+  .controls{flex-direction:column; gap:10px;}
+  .modal{width:95%; padding:15px;}
 }
 </style>
 </head>
 
 <body>
 
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="brand">ADMIN•CORE</div>
   <nav class="nav">
     <a class="active" href="admin.html">Faculty Management</a>
   </nav>
 </aside>
 
+<div class="overlay" id="overlay"></div>
+
 <div class="main">
   <div class="header">
+    <button id="menuToggle">☰</button>
     <h1>Faculty Profile Management</h1>
     <div>
       <button class="action-btn" onclick="openNew()">+ Add Faculty</button>
@@ -252,6 +287,16 @@ const supabase1=supabase.createClient(
   "sb_publishable_i0HnA_T0MaU3M5z_qN_Grg_YaGpDgvf"
 );
 
+// Sidebar toggle for mobile
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+document.getElementById('menuToggle').addEventListener('click', ()=>{
+  sidebar.classList.add('show'); overlay.classList.add('show');
+});
+overlay.addEventListener('click', ()=>{
+  sidebar.classList.remove('show'); overlay.classList.remove('show');
+});
+
 let users=[],filtered=[],current=null,isNew=false;
 
 async function fetchData(){
@@ -262,6 +307,7 @@ async function fetchData(){
 }
 
 function render(){
+  const list = document.getElementById('list');
   list.innerHTML="";
   filtered.forEach((u,i)=>{
     list.innerHTML+=`
@@ -289,11 +335,8 @@ function search(q){
 }
 
 function sortByDepartment(type){
-  if(type==="az"){
-    filtered.sort((a,b)=>a.Department.localeCompare(b.Department));
-  }else if(type==="za"){
-    filtered.sort((a,b)=>b.Department.localeCompare(a.Department));
-  }
+  if(type==="az"){filtered.sort((a,b)=>a.Department.localeCompare(b.Department));}
+  else if(type==="za"){filtered.sort((a,b)=>b.Department.localeCompare(a.Department));}
   render();
 }
 
@@ -339,13 +382,8 @@ async function delUser(email){
   }
 }
 
-function closeModal(e){
-  if(!e||e.target===modal) modal.style.display="none";
-}
-function logout(){
-  sessionStorage.clear();
-  location.href="index.html";
-}
+function closeModal(e){if(!e||e.target===modal) modal.style.display="none";}
+function logout(){sessionStorage.clear(); location.href="index.html";}
 
 fetchData();
 </script>

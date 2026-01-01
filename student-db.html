@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+/* ===== Root & General ===== */
 :root{
   --bg:#0f1111;
   --panel:#161b1b;
@@ -31,37 +32,50 @@ body{
   display:grid;
   grid-template-columns:240px 1fr;
   min-height:100vh;
+  transition: all 0.3s ease;
 }
 
-/* SIDEBAR */
+/* ===== Sidebar ===== */
 .sidebar{
   background:#131921;
   padding:28px 20px;
   border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  transition: transform 0.3s ease;
 }
-
+.sidebar.hide{transform: translateX(-100%);}
 .brand{
-  font-size:22px;
+  font-size: clamp(18px, 2vw, 22px);
   font-weight:800;
   color:var(--accent);
   margin-bottom:40px;
 }
-
 .nav a{
   display:block;
   padding:14px 18px;
   border-radius:8px;
   color:var(--muted);
   text-decoration:none;
+  margin-bottom:6px;
 }
-
 .nav a.active,
 .nav a:hover{
   background:var(--panel-soft);
   color:#fff;
 }
 
-/* HEADER */
+/* ===== Overlay ===== */
+.overlay{
+  position: fixed;
+  inset:0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  z-index: 999;
+}
+.overlay.show { display: block; }
+
+/* ===== Header ===== */
 .header{
   position:sticky;
   top:0;
@@ -71,20 +85,21 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  flex-wrap:wrap;
 }
+.header h1{font-size: clamp(20px, 3vw, 30px);}
+.header .action-btn{margin-top:8px;}
 
-.header h1{font-size:30px}
+/* ===== Content ===== */
+.content{padding: clamp(20px, 4vw, 40px);}
 
-/* CONTENT */
-.content{padding:40px}
-
-/* CONTROLS */
+/* ===== Controls ===== */
 .controls{
   display:flex;
   gap:12px;
+  flex-wrap:wrap;
   margin-bottom:20px;
 }
-
 .controls input{
   padding:12px;
   background:var(--panel);
@@ -95,38 +110,31 @@ body{
   min-width:200px;
 }
 
-/* TABLE */
+/* ===== Table ===== */
 .table-wrapper{
   display:grid;
   gap:14px;
+  overflow-x:auto;
 }
-
-.table-header{
+.table-header, .table-row{
   display:grid;
-  grid-template-columns:1.4fr 1fr 1fr 1fr 1fr 1.4fr auto;
   gap:10px;
+  grid-template-columns:1.4fr 1fr 1fr 1fr 1fr 1.4fr auto;
+}
+.table-header{
   font-size:12px;
   color:var(--muted);
-  cursor:pointer;
 }
-
 .table-row{
   background:var(--panel);
   border:1px solid var(--border);
   border-radius:var(--radius);
-  padding:20px;
-  display:grid;
-  grid-template-columns:1.4fr 1fr 1fr 1fr 1fr 1.4fr auto;
-  gap:10px;
-  margin-top:10px;
-  transition: border-color 0.3s;
+  padding:12px 16px;
+  transition:border-color 0.3s;
 }
+.table-row:hover{border-color:var(--accent);}
 
-.table-row:hover{
-  border-color: var(--accent);
-}
-
-/* BUTTONS */
+/* ===== Buttons ===== */
 .action-btn{
   background:var(--accent);
   border:none;
@@ -135,14 +143,21 @@ body{
   border-radius:6px;
   font-weight:700;
   cursor:pointer;
+  transition: all 0.3s;
 }
-
+.action-btn:hover{
+  background:#f6ff00;
+  color:#111;
+}
 .action-btn.danger{
   background:var(--danger);
   color:#fff;
 }
+.action-btn.danger:hover{
+  background:#ff4d4d;
+}
 
-/* MODAL */
+/* ===== Modal ===== */
 .modal-overlay{
   position:fixed;
   inset:0;
@@ -150,58 +165,88 @@ body{
   display:none;
   align-items:center;
   justify-content:center;
+  z-index:1000;
 }
-
 .modal{
   width:520px;
+  max-width:90%;
   background:var(--bg);
   border:1px solid var(--border);
   border-radius:14px;
   padding:30px;
 }
-
-.modal label{font-size:12px;color:var(--muted)}
-.modal input,
-.modal select{
-  width:100%;
-  padding:12px;
-  margin:8px 0 18px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:8px;
-  color:#fff;
-}
-
-.modal input[readonly]{
-  background:#2e3b4e;
-  color:#b0b7bd;
-}
-
 .modal-actions{
+  margin-top:16px;
   display:flex;
-  gap:12px;
+  gap:10px;
+  flex-wrap:wrap;
+}
+#menuToggle{
+  display:none;
+  font-size:24px;
+  background:none;
+  border:none;
+  color:var(--accent);
+  cursor:pointer;
+}
+
+/* ===== Responsive ===== */
+@media(max-width:1200px){
+  #menuToggle{display:inline-block;}
+  body{grid-template-columns:1fr;}
+  .sidebar{
+    position:fixed; top:0; left:0; height:100vh; z-index:1000; transform:translateX(-100%);
+  }
+  .sidebar.show{transform:translateX(0);}
 }
 
 @media(max-width:900px){
-  body{grid-template-columns:1fr}
-  .sidebar{display:none}
+  .header{padding:16px 20px;}
+  .header h1{font-size:22px;}
+  .controls input{flex:1 1 100%;}
+  .table-header, .table-row{
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    font-size:12px;
+  }
+  .table-wrapper{overflow-x:auto;}
 }
+
+@media(max-width:600px){
+  .table-header { display: none; }
+  .table-row {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+  .table-row > div { padding: 4px 0; width:100%; }
+}
+
+@media(max-width:450px){
+  .header{flex-direction:column; align-items:flex-start; gap:10px;}
+  .action-btn{width:100%; padding:12px; margin-top:4px;}
+  .controls{flex-direction:column; gap:10px;}
+  .modal{width:95%; padding:15px;}
+}
+
 </style>
 </head>
 
 <body>
 
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="brand">FACULTY•CORE</div>
   <nav class="nav">
     <a href="faculty.html">Student Attendance</a>
     <a class="active" href="student-db.html">Student DB Management</a>
-    <a href="student-dashboard.html">Student Dashboard</a>
   </nav>
 </aside>
 
+<div class="overlay" id="overlay"></div>
+
 <div class="main">
   <div class="header">
+    <button id="menuToggle">☰</button>
     <h1>Student DB Management</h1>
     <div>
       <button class="action-btn" onclick="openNew()">+ Add Student</button>
@@ -234,7 +279,7 @@ body{
   <div class="modal" onclick="event.stopPropagation()">
     <h2 id="modal_title">Edit Student</h2>
 
-   <label style="display:none;">Faculty Email</label>
+    <label style="display:none;">Faculty Email</label>
     <input id="d_facultyemail" style="display:none;" readonly>
 
     <label>Name</label>
@@ -284,9 +329,20 @@ const supabase1 = supabase.createClient(
   "sb_publishable_i0HnA_T0MaU3M5z_qN_Grg_YaGpDgvf"
 );
 
+// Sidebar toggle for mobile
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+document.getElementById('menuToggle').addEventListener('click', ()=>{
+  sidebar.classList.add('show');
+  overlay.classList.add('show');
+});
+overlay.addEventListener('click', ()=>{
+  sidebar.classList.remove('show');
+  overlay.classList.remove('show');
+});
+
 let users=[], filtered=[], current=null, isNew=false;
 let sortDir = { Name:1, Rollno:1, Class:1, Department:1, Section:1, ParentsPhNo:1 };
-
 const facultyEmailFromSession = sessionStorage.getItem('Email') || '';
 
 async function fetchData(){
@@ -297,16 +353,17 @@ async function fetchData(){
 }
 
 function render(){
+  const list = document.getElementById('list');
   list.innerHTML = "";
   filtered.forEach((u,i)=>{
     list.innerHTML += `
       <div class="table-row">
-        <div>${u.Name}</div>
-        <div>${u.Rollno}</div>
-        <div>${u.Class}</div>
-        <div>${u.Department}</div>
-        <div>${u.Section || '-'}</div>
-        <div>${u.ParentsPhNo || '-'}</div>
+        <div>Name: ${u.Name}</div>
+        <div>Roll No: ${u.Rollno}</div>
+        <div>Class: ${u.Class}</div>
+        <div>Department: ${u.Department}</div>
+        <div>Section: ${u.Section || '-'}</div>
+        <div>Parents Mobile: ${u.ParentsPhNo || '-'}</div>
         <div>
           <button class="action-btn" onclick="edit(${i})">Edit</button>
           <button class="action-btn danger" onclick="delUser('${u.Rollno}')">Delete</button>
@@ -345,7 +402,7 @@ function sortTable(col){
 
 function openNew(){
   isNew = true;
-  modal_title.innerText = "Add Student";
+  document.getElementById('modal_title').innerText = "Add Student";
   d_facultyemail.value = facultyEmailFromSession;
   d_name.value = d_rollno.value = d_class.value =
   d_department.value = d_mainadd.value = d_parentph.value = "";
@@ -355,7 +412,7 @@ function openNew(){
 function edit(i){
   isNew = false;
   current = filtered[i];
-  modal_title.innerText = "Edit Student";
+  document.getElementById('modal_title').innerText = "Edit Student";
   d_facultyemail.value = facultyEmailFromSession;
   d_name.value = current.Name;
   d_rollno.value = current.Rollno;
@@ -376,13 +433,11 @@ async function save(){
     Section: d_mainadd.value,
     ParentsPhNo: d_parentph.value
   };
-
   if(isNew){
     await supabase1.from("StudentDB").insert([payload]);
   } else {
     await supabase1.from("StudentDB").update(payload).eq("id", current.id);
   }
-
   closeModal();
   fetchData();
 }
@@ -398,13 +453,10 @@ function closeModal(e){
   if(!e || e.target===modal) modal.style.display="none";
 }
 
-function logout(){
-  sessionStorage.clear();
-  location.href="index.html";
-}
+function logout(){sessionStorage.clear(); location.href="index.html";}
+
 
 fetchData();
 </script>
-
 </body>
 </html>
