@@ -42,7 +42,8 @@ async function Lg() {
   if (data.Password === jPass) {
     sessionStorage.setItem("Email", data.Email);
     sessionStorage.setItem("role", data.Role);
-
+     sessionStorage.setItem("FacultyName", data.Name);
+      sessionStorage.setItem("FacultyDepartment", data.Department);
     window.location.href =
       data.Role === 'Admin' ? "admin.html" : "faculty.html";
   } else {

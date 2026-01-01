@@ -302,11 +302,16 @@ async function sendParentSMS() {
     const parentNumbers = parentsData.map(p => p.ParentsPhNo).join(",");
 
     // Get faculty info (assuming stored in sessionStorage)
-    const Faculty_Name = sessionStorage.getItem("FacultyName") || "Faculty";
-    const Faculty_Department = sessionStorage.getItem("FacultyDepartment") || "Department";
+    const Faculty_Name = sessionStorage.getItem("FacultyName");
+    const Faculty_Department = sessionStorage.getItem("FacultyDepartment");
 
     // Generate single SMS message
-    const message = `Dear Parent, your child was absent today. - ${Faculty_Name}, ${Faculty_Department}, Kongunadu Arts and Science College`;
+    const message = `
+        Dear Parent,
+        Your child was absent today. 
+        - ${Faculty_Name}, 
+        ${Faculty_Department}, 
+        Kongunadu Arts and Science College,GN Mills,Cbe-29`;
 
     // Create a single clickable SMS link
     const smsLink = document.createElement("a");
