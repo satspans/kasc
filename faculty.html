@@ -303,7 +303,7 @@ async function sendParentSMS() {
 
     // Get faculty info (assuming stored in sessionStorage)
     const Faculty_Name = sessionStorage.getItem("FacultyName");
-    const Role = sessionStorage.getItem("Role");
+    const Professor = sessionStorage.getItem("Professor");
     const Faculty_Department = sessionStorage.getItem("FacultyDepartment");
 
     // Generate single SMS message
@@ -312,7 +312,7 @@ Dear Parent,
 This is to inform you that your child was absent for today’s class.
 
     - ${Faculty_Name}, 
-    ${Role},
+    ${Professor},
     ${Faculty_Department}, 
     Kongunadu Arts and Science College (Autonomous),
     GN Mills,
