@@ -8,8 +8,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-var SUPABASE_URL = 'https://xeafepvajcaloumjmpoe.supabase.co';
-var SUPABASE_KEY = 'sb_publishable_v4-A8g2PFaM__MWxbYjDfg_cA2m3MYB';
+var SUPABASE_URL ;
+var SUPABASE_KEY ;
+
+SUPABASE_URL="https://wljlkyfxlgnhkltdltng.supabase.co";
+SUPABASE_KEY="sb_publishable_i0HnA_T0MaU3M5z_qN_Grg_YaGpDgvf";
 
 const supabase1 = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -37,7 +40,7 @@ async function Lg() {
   }
 
   if (data.Password === jPass) {
-    sessionStorage.setItem("email", data.Email);
+    sessionStorage.setItem("Email", data.Email);
     sessionStorage.setItem("role", data.Role);
 
     window.location.href =
@@ -94,9 +97,9 @@ html,body{
 
 .banner h1{
     color: #f6ff00;
-    font-size: 70px;        /* big font */
+    font-size: 40px;        /* big font */
     font-weight: 800;
-    margin: 0;
+    margin: 0; 
     letter-spacing: 3px; text-shadow: 7px 7px #000;
 }
 .banner p{
@@ -266,8 +269,7 @@ html,body{
 
 <div class="overlay"></div>
  <div class="banner"> 
-  <h1>SATSPANS</h1>
-  <p>Smart Attendance & Parents Notification System</p>
+  <h1>Smart Attendance & Parents Notification System</h1>
 </div>
 <div class="container">
     <div class="login-box">
