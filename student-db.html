@@ -156,16 +156,43 @@ select,input{
 button:hover,select:hover{border:1px solid var(--accent);}
 
 /* Responsive */
+/* Responsive table adjustments for screens below 2500px */
 @media (max-width: 2500px){
-  body{grid-template-columns:1fr;}
-  .sidebar{position:fixed;top:0;left:0;height:100vh;z-index:1000;transform:translateX(-100%);}
-  .sidebar.show{transform:translateX(0);}
-  #menuToggle{display:inline-block;}
-  .overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#00000080;z-index:500;}
-  .overlay.show{display:block;}
-  .table-row, .table-header{grid-template-columns:1fr;grid-template-rows:repeat(7, auto);}
-  .table-row button{width:100%; margin-top:5px;}
+  /* Keep the sidebar toggle */
+  body { grid-template-columns: 1fr; }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%);
+  }
+  .sidebar.show { transform: translateX(0); }
+  #menuToggle { display: inline-block; }
+  .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #00000080; z-index: 500; }
+  .overlay.show { display: block; }
+
+  /* Table layout for large screens but still responsive */
+  .table-header, .table-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    grid-auto-rows: auto;
+  }
+
+  /* Adjust buttons to fit nicely */
+  .table-row button {
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  /* Optional: reduce padding slightly on very large screens */
+  .table-row, .table-header {
+    padding: 10px 14px;
+  }
 }
+
 </style>
 </head>
 <body>
@@ -183,8 +210,8 @@ button:hover,select:hover{border:1px solid var(--accent);}
 <!-- Main -->
 <div class="main">
   <div class="header">
-    <h1>Student DB Management</h1>
     <button id="menuToggle" onclick="toggleSidebar()">☰</button>
+    <h1>Student DB Management</h1>
     <div class="actions">
       <button class="action-btn" onclick="openNew()">+ Add Student</button>
       <button class="action-btn danger" onclick="logout()">Logout</button>
@@ -335,5 +362,6 @@ fetchData();
 
 </body>
 </html>
+
 
 
