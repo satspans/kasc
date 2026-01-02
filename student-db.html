@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ===== Root & General ===== */
+/* ===== Root & General Variables ===== */
 :root{
   --bg:#0f1111;
   --panel:#161b1b;
@@ -17,21 +17,21 @@
   --accent:#f6ff00;
   --danger:#ff0000;
   --radius:12px;
+  --gap:12px;
 }
 
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+  margin:0; padding:0; box-sizing:border-box;
   font-family:"Segoe UI",Arial,sans-serif;
 }
 
 body{
-  background:var(--bg);
-  color:var(--text);
-  display:grid;
-  grid-template-columns:240px 1fr;
-  min-height:100vh;
+  background: var(--bg);
+  color: var(--text);
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+  transition: all 0.3s ease;
 }
 
 /* ===== Sidebar ===== */
@@ -41,25 +41,27 @@ body{
   border-right:1px solid var(--border);
   display:flex;
   flex-direction:column;
+  transition: transform 0.3s ease;
 }
 .sidebar.hide{transform: translateX(-100%);}
 .brand{
-  font-size:22px;
+  font-size: clamp(18px,2vw,26px);
   font-weight:800;
-  color:var(--accent);
+  color: var(--accent);
   margin-bottom:40px;
 }
 .nav a{
   display:block;
-  padding:14px 18px;
+  padding:12px 16px;
   border-radius:8px;
   color:var(--muted);
   text-decoration:none;
   margin-bottom:6px;
+  font-size: clamp(14px,1.2vw,16px);
 }
 .nav a.active,
 .nav a:hover{
-  background:var(--panel-soft);
+  background: var(--panel-soft);
   color:#fff;
 }
 
@@ -67,51 +69,66 @@ body{
 .overlay{
   position: fixed;
   inset:0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6);
   display: none;
   z-index: 999;
 }
-.overlay.show { display: block; }
+.overlay.show { display:block; }
 
 /* ===== Header ===== */
 .header{
-  position:sticky;
+  position: sticky;
   top:0;
-  background:#0f1111;
+  background: var(--bg);
   border-bottom:1px solid var(--border);
-  padding:24px 40px;
+  padding: clamp(16px,2vw,24px) clamp(20px,4vw,40px);
   display:flex;
-  justify-content:space-between;
+  justify-content: space-between;
   align-items:center;
+  flex-wrap:wrap;
 }
-.header h1{font-size:26px;}
+.header h1{
+  font-size: clamp(20px,3vw,30px);
+}
+.header .actions{
+  display:flex;
+  gap: var(--gap);
+}
 
 /* ===== Content ===== */
-.content{padding:40px;}
+.content{
+  padding: clamp(20px,4vw,40px);
+}
 
 /* ===== Controls ===== */
 .controls{
   display:flex;
-  gap:12px;
+  gap: var(--gap);
   margin-bottom:20px;
 }
 .controls input{
-  padding:12px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:8px;
-  color:#fff;
   flex:1;
+  padding:12px;
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: var(--panel);
+  color:#fff;
+  font-size: 14px;
+}
+.controls input:focus{
+  outline:none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(246,255,0,0.15);
 }
 
 /* ===== Table ===== */
 .table-wrapper{
   display:grid;
-  gap:14px;
+  gap: var(--gap);
 }
 .table-header, .table-row{
   display:grid;
-  grid-template-columns:1.4fr 1fr 1fr 1fr 1fr 1.4fr auto;
+  grid-template-columns:1.5fr 1fr 1fr 1.5fr 1fr 1.5fr auto;
   gap:10px;
 }
 .table-header{
@@ -119,90 +136,79 @@ body{
   color:var(--muted);
 }
 .table-row{
-  background:var(--panel);
+  background: var(--panel);
   border:1px solid var(--border);
-  border-radius:12px;
+  border-radius: var(--radius);
   padding:12px 16px;
+  transition: border-color 0.2s;
 }
-.table-row:hover{border-color:var(--accent);}
+.table-row:hover{ border-color: var(--accent); }
 
 /* ===== Buttons ===== */
 .action-btn{
-  background:var(--accent);
-  border:none;
+  background: var(--accent);
   color:#111;
-  padding:8px 14px;
+  border:none;
   border-radius:6px;
+  padding:10px 18px;
   font-weight:700;
   cursor:pointer;
+  transition: 0.2s;
 }
-.action-btn.danger{
-  background:var(--danger);
-  color:#fff;
-}
+.action-btn:hover{ filter: brightness(1.1); }
+.action-btn.danger{ background: var(--danger); color:#fff; }
 
 /* ===== Modal ===== */
 .modal-overlay{
-  position:fixed;
+  position: fixed;
   inset:0;
-  background:rgba(0,0,0,.75);
-  display:none;
-  align-items:center;
-  justify-content:center;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
   z-index:1000;
 }
-
 .modal{
-  width:520px;
+  width: 520px;
   max-width:95%;
-  background:var(--bg);
+  background: var(--bg);
   border:1px solid var(--border);
   border-radius:14px;
   padding:30px;
+  display:flex;
+  flex-direction:column;
 }
-
-/* ===== Enhanced Form Theme ===== */
 .modal h2{
-  margin-bottom:20px;
+  color: var(--accent);
   font-size:22px;
-  color:var(--accent);
+  margin-bottom:20px;
 }
-
 .modal label{
+  color: var(--muted);
   font-size:13px;
-  color:var(--muted);
   margin-bottom:6px;
   display:block;
 }
-
-.modal input,
-.modal select{
+.modal input, .modal select{
   width:100%;
-  padding:12px 14px;
-  background:#141919;
-  border:1px solid var(--border);
+  padding:12px;
   border-radius:8px;
+  border:1px solid var(--border);
+  background:#141919;
   color:#fff;
   margin-bottom:16px;
 }
-
-.modal input:focus,
-.modal select:focus{
+.modal input:focus, .modal select:focus{
   outline:none;
-  border-color:var(--accent);
+  border-color: var(--accent);
   box-shadow:0 0 0 2px rgba(246,255,0,0.15);
 }
-
 .form-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:16px;
 }
-
-.form-full{
-  grid-column:1 / -1;
-}
-
+.form-full{ grid-column:1 / -1; }
 .modal-actions{
   display:flex;
   justify-content:flex-end;
@@ -210,163 +216,42 @@ body{
   margin-top:20px;
 }
 
-/* =========================================================
-   ULTRA-WIDE DESKTOP ( ≥ 2000px – 2450px )
-========================================================= */
-@media (min-width: 2000px) {
-
-  body{
-    grid-template-columns:300px 1fr;
-  }
-
-  .sidebar{
-    padding:40px 28px;
-  }
-
-  .brand{
-    font-size:26px;
-  }
-
-  .header{
-    padding:32px 80px;
-  }
-
-  .header h1{
-    font-size:36px;
-  }
-
-  .content{
-    padding:60px 80px;
-  }
-
-  .controls input{
-    font-size:16px;
-    padding:16px;
-    max-width:700px;
-  }
-
-  .table-header,
-  .table-row{
-    grid-template-columns:
-      2fr 1.2fr 1.2fr 1.6fr 1fr 1.6fr auto;
-    font-size:15px;
-  }
-
-  .table-row{
-    padding:18px 24px;
-  }
-
-  .action-btn{
-    padding:12px 22px;
-    font-size:15px;
-  }
-
-  .modal{
-    width:680px;
-    padding:40px;
-  }
-
-  .modal h2{
-    font-size:26px;
-  }
-
-  .modal input,
-  .modal select{
-    padding:16px;
-    font-size:15px;
-  }
+/* ===== Responsive – Mobile ≤400px ===== */
+@media (max-width:400px){
+  body{ grid-template-columns:1fr; }
+  .sidebar{ width:240px; transform: translateX(-100%); position:fixed; top:0; left:0; height:100vh; z-index:1000; }
+  .header{ flex-direction:column; align-items:flex-start; gap:10px; padding:12px 16px; }
+  .header h1{ font-size:20px; }
+  .header .actions{ width:100%; flex-direction:column; gap:6px; }
+  .controls{ flex-direction:column; gap:8px; }
+  .controls input{ font-size:14px; padding:12px; }
+  .table-header{ display:none; }
+  .table-row{ display:flex; flex-direction:column; gap:6px; font-size:13px; padding:12px; }
+  .table-row div{ width:100%; }
+  .action-btn{ width:100%; margin-top:6px; }
+  .modal{ width:95%; padding:16px; }
+  .modal h2{ font-size:20px; }
+  .form-grid{ grid-template-columns:1fr; gap:10px; }
+  .modal input, .modal select{ padding:12px; font-size:14px; }
+  .modal-actions{ flex-direction:column; }
 }
 
-
-/* =========================================================
-   SMALL MOBILE ( ≤ 400px )
-========================================================= */
-@media (max-width: 400px) {
-
-  body{
-    grid-template-columns:1fr;
-  }
-
-  .sidebar{
-    width:240px;
-  }
-
-  .header{
-    padding:14px 16px;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:12px;
-  }
-
-  .header h1{
-    font-size:20px;
-  }
-
-  .content{
-    padding:16px;
-  }
-
-  .controls{
-    flex-direction:column;
-    gap:10px;
-  }
-
-  .controls input{
-    width:100%;
-    padding:12px;
-    font-size:14px;
-  }
-
-  /* Stack table rows like cards */
-  .table-header{
-    display:none;
-  }
-
-  .table-row{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-    padding:12px;
-    font-size:13px;
-  }
-
-  .table-row div{
-    width:100%;
-  }
-
-  .action-btn{
-    width:100%;
-    padding:12px;
-    font-size:14px;
-    margin-top:6px;
-  }
-
-  /* Modal */
-  .modal{
-    width:95%;
-    padding:16px;
-  }
-
-  .modal h2{
-    font-size:20px;
-  }
-
-  .form-grid{
-    grid-template-columns:1fr;
-    gap:10px;
-  }
-
-  .modal input,
-  .modal select{
-    padding:12px;
-    font-size:14px;
-  }
-
-  .modal-actions{
-    flex-direction:column;
-  }
+/* ===== Responsive – Ultra-wide Desktop ≥2450px ===== */
+@media (min-width:2450px){
+  body{ grid-template-columns:320px 1fr; }
+  .sidebar{ padding:40px 32px; }
+  .brand{ font-size:32px; }
+  .header{ padding:40px 80px; }
+  .header h1{ font-size:36px; }
+  .header .actions .action-btn{ padding:16px 28px; font-size:18px; }
+  .content{ padding:60px 80px; }
+  .controls input{ font-size:16px; padding:16px; max-width:800px; }
+  .table-header, .table-row{ grid-template-columns:2fr 1.2fr 1.2fr 1.6fr 1fr 1.6fr auto; font-size:16px; }
+  .table-row{ padding:18px 24px; }
+  .modal{ width:680px; padding:40px; }
+  .modal h2{ font-size:28px; }
+  .modal input, .modal select{ padding:16px; font-size:16px; }
 }
-
 </style>
 </head>
 
@@ -383,7 +268,7 @@ body{
 <div class="main">
   <div class="header">
     <h1>Student DB Management</h1>
-    <div>
+    <div class="actions">
       <button class="action-btn" onclick="openNew()">+ Add Student</button>
       <button class="action-btn danger" onclick="logout()">Logout</button>
     </div>
@@ -404,10 +289,9 @@ body{
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- Modal -->
 <div class="modal-overlay" id="modal" onclick="closeModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
-
     <h2 id="modal_title">Add Student</h2>
     <input id="d_facultyemail" style="display:none">
 
@@ -462,7 +346,6 @@ body{
       <button class="action-btn" onclick="save()">Save</button>
       <button class="action-btn danger" onclick="closeModal()">Cancel</button>
     </div>
-
   </div>
 </div>
 
@@ -551,4 +434,3 @@ fetchData();
 
 </body>
 </html>
-
