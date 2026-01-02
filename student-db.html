@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ===== Root Variables ===== */
 :root{
   --bg:#0f1111;
   --panel:#161b1b;
@@ -21,14 +20,14 @@
 }
 
 /* ===== General ===== */
-*{ margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",Arial,sans-serif; }
+*{margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",Arial,sans-serif;}
 body{
   display:grid;
   grid-template-columns:240px 1fr;
   min-height:100vh;
   background:var(--bg);
   color:var(--text);
-  transition: all 0.3s ease;
+  transition:all 0.3s ease;
 }
 
 /* ===== Sidebar ===== */
@@ -47,9 +46,9 @@ body{
   transition:transform 0.3s ease;
   z-index:1001;
 }
-.sidebar.hide{ transform:translateX(-100%); }
+.sidebar.hide{transform:translateX(-100%);}
 .brand{
-  font-size: clamp(18px,2vw,28px);
+  font-size:22px;
   font-weight:800;
   color:var(--accent);
   margin-bottom:40px;
@@ -74,7 +73,7 @@ body{
   display:none;
   z-index:1000;
 }
-.overlay.show{ display:block; }
+.overlay.show{display:block;}
 
 /* ===== Header ===== */
 .header{
@@ -82,19 +81,20 @@ body{
   top:0;
   background:var(--bg);
   border-bottom:1px solid var(--border);
-  padding: clamp(16px,2vw,24px) clamp(20px,4vw,40px);
+  padding:20px 40px;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:var(--gap);
   flex-wrap:wrap;
 }
-.header h1{ font-size:clamp(20px,3vw,30px); }
-.header .actions{ display:flex; gap:var(--gap); }
+.header h1{font-size:24px; flex:1;}
+.header .actions{display:flex; gap:var(--gap);}
 .header .menu-btn{
   display:none;
   background:none;
   border:none;
-  font-size:24px;
+  font-size:26px;
   color:var(--accent);
   cursor:pointer;
 }
@@ -145,9 +145,9 @@ body{
   padding:10px 18px;
   font-weight:700;
   cursor:pointer;
-  transition: 0.2s;
+  transition:0.2s;
 }
-.action-btn:hover{ filter:brightness(1.1); }
+.action-btn:hover{filter:brightness(1.1);}
 .action-btn.danger{ background:var(--danger); color:#fff; }
 
 /* ===== Modal ===== */
@@ -208,40 +208,44 @@ body{
   margin-top:20px;
 }
 
-/* ===== Mobile ≤400px ===== */
-@media (max-width:400px){
-  body{ grid-template-columns:1fr; }
-  .sidebar{ transform:translateX(-100%); position:fixed; top:0; left:0; height:100vh; z-index:1001; }
-  .header{ flex-direction:row; align-items:center; padding:12px 16px; }
-  .header h1{ font-size:18px; flex:1; }
-  .header .menu-btn{ display:block; }
-  .header .actions{ display:none; }
-  .controls{ flex-direction:column; gap:8px; }
-  .controls input{ font-size:14px; padding:12px; }
-  .table-header{ display:none; }
-  .table-row{ display:flex; flex-direction:column; gap:6px; font-size:13px; padding:12px; }
-  .table-row div{ width:100%; }
-  .action-btn{ width:100%; margin-top:6px; }
-  .modal{ width:95%; padding:16px; }
-  .modal h2{ font-size:20px; }
-  .form-grid{ grid-template-columns:1fr; gap:10px; }
-  .modal input, .modal select{ padding:12px; font-size:14px; }
-  .modal-actions{ flex-direction:column; }
+/* ===== MOBILE ≤400px ===== */
+@media(max-width:400px){
+  body{grid-template-columns:1fr;}
+  .sidebar{transform:translateX(-100%);}
+  .header{
+    flex-direction:row;
+    align-items:center;
+    padding:12px 16px;
+  }
+  .header h1{font-size:18px; flex:1;}
+  .header .menu-btn{display:block;}
+  .header .actions{display:none;}
+  .controls{flex-direction:column; gap:8px;}
+  .controls input{font-size:14px; padding:12px;}
+  .table-header{display:none;}
+  .table-row{display:flex; flex-direction:column; gap:6px; font-size:13px; padding:12px;}
+  .table-row div{width:100%;}
+  .action-btn{width:100%; margin-top:6px;}
+  .modal{width:95%; padding:16px;}
+  .modal h2{font-size:20px;}
+  .form-grid{grid-template-columns:1fr; gap:10px;}
+  .modal input, .modal select{padding:12px; font-size:14px;}
+  .modal-actions{flex-direction:column;}
 }
 
-/* ===== Ultra-wide Desktop ≥2450px ===== */
-@media (min-width:2450px){
-  body{ grid-template-columns:320px 1fr; }
-  .sidebar{ padding:40px 32px; }
-  .brand{ font-size:32px; }
-  .header{ padding:40px 80px; }
-  .header h1{ font-size:36px; }
-  .controls input{ font-size:16px; padding:16px; max-width:800px; }
-  .table-header, .table-row{ grid-template-columns:2fr 1.2fr 1.2fr 1.6fr 1fr 1.6fr auto; font-size:16px; }
-  .table-row{ padding:18px 24px; }
-  .modal{ width:680px; padding:40px; }
-  .modal h2{ font-size:28px; }
-  .modal input, .modal select{ padding:16px; font-size:16px; }
+/* ===== ULTRA-WIDE ≥2450px ===== */
+@media(min-width:2450px){
+  body{grid-template-columns:320px 1fr;}
+  .sidebar{padding:40px 32px;}
+  .brand{font-size:32px;}
+  .header{padding:40px 80px;}
+  .header h1{font-size:36px;}
+  .controls input{font-size:16px; padding:16px; max-width:800px;}
+  .table-header, .table-row{grid-template-columns:2fr 1.2fr 1.2fr 1.6fr 1fr 1.6fr auto; font-size:16px;}
+  .table-row{padding:18px 24px;}
+  .modal{width:680px; padding:40px;}
+  .modal h2{font-size:28px;}
+  .modal input, .modal select{padding:16px; font-size:16px;}
 }
 </style>
 </head>
@@ -352,7 +356,6 @@ async function fetchData(){
   filtered = users.filter(u=>u.FacultyEmail===facultyEmailFromSession);
   render();
 }
-
 function render(){
   list.innerHTML="";
   filtered.forEach((u,i)=>{
@@ -371,7 +374,6 @@ function render(){
     </div>`;
   });
 }
-
 function openNew(){ isNew=true; modal.style.display="flex"; }
 function edit(i){
   isNew=false; current=filtered[i];
@@ -402,17 +404,11 @@ function delUser(r){ if(confirm("Delete student?")){ supabase1.from("StudentDB")
 function closeModal(e){ if(!e || e.target===modal) modal.style.display="none"; }
 function logout(){ sessionStorage.clear(); location.href="index.html"; }
 
-/* ===== Sidebar Toggle ===== */
+/* Sidebar Toggle */
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
-function toggleSidebar(){
-  sidebar.classList.toggle('hide');
-  overlay.classList.toggle('show');
-}
-function closeSidebar(){
-  sidebar.classList.add('hide');
-  overlay.classList.remove('show');
-}
+function toggleSidebar(){ sidebar.classList.toggle('hide'); overlay.classList.toggle('show'); }
+function closeSidebar(){ sidebar.classList.add('hide'); overlay.classList.remove('show'); }
 
 fetchData();
 </script>
