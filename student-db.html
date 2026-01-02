@@ -210,10 +210,163 @@ body{
   margin-top:20px;
 }
 
-@media(max-width:600px){
-  body{grid-template-columns:1fr;}
-  .form-grid{grid-template-columns:1fr;}
+/* =========================================================
+   ULTRA-WIDE DESKTOP ( ≥ 2000px – 2450px )
+========================================================= */
+@media (min-width: 2000px) {
+
+  body{
+    grid-template-columns:300px 1fr;
+  }
+
+  .sidebar{
+    padding:40px 28px;
+  }
+
+  .brand{
+    font-size:26px;
+  }
+
+  .header{
+    padding:32px 80px;
+  }
+
+  .header h1{
+    font-size:36px;
+  }
+
+  .content{
+    padding:60px 80px;
+  }
+
+  .controls input{
+    font-size:16px;
+    padding:16px;
+    max-width:700px;
+  }
+
+  .table-header,
+  .table-row{
+    grid-template-columns:
+      2fr 1.2fr 1.2fr 1.6fr 1fr 1.6fr auto;
+    font-size:15px;
+  }
+
+  .table-row{
+    padding:18px 24px;
+  }
+
+  .action-btn{
+    padding:12px 22px;
+    font-size:15px;
+  }
+
+  .modal{
+    width:680px;
+    padding:40px;
+  }
+
+  .modal h2{
+    font-size:26px;
+  }
+
+  .modal input,
+  .modal select{
+    padding:16px;
+    font-size:15px;
+  }
 }
+
+
+/* =========================================================
+   SMALL MOBILE ( ≤ 400px )
+========================================================= */
+@media (max-width: 400px) {
+
+  body{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    width:240px;
+  }
+
+  .header{
+    padding:14px 16px;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+  }
+
+  .header h1{
+    font-size:20px;
+  }
+
+  .content{
+    padding:16px;
+  }
+
+  .controls{
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .controls input{
+    width:100%;
+    padding:12px;
+    font-size:14px;
+  }
+
+  /* Stack table rows like cards */
+  .table-header{
+    display:none;
+  }
+
+  .table-row{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding:12px;
+    font-size:13px;
+  }
+
+  .table-row div{
+    width:100%;
+  }
+
+  .action-btn{
+    width:100%;
+    padding:12px;
+    font-size:14px;
+    margin-top:6px;
+  }
+
+  /* Modal */
+  .modal{
+    width:95%;
+    padding:16px;
+  }
+
+  .modal h2{
+    font-size:20px;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .modal input,
+  .modal select{
+    padding:12px;
+    font-size:14px;
+  }
+
+  .modal-actions{
+    flex-direction:column;
+  }
+}
+
 </style>
 </head>
 
@@ -398,3 +551,4 @@ fetchData();
 
 </body>
 </html>
+
