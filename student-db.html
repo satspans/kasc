@@ -14,279 +14,158 @@
   --text:#ffffff;
   --muted:#b0b7bd;
   --accent:#f6ff00;
-  --danger:#ff4d4d;
+  --danger:#ff0000;
   --radius:12px;
-  --gap:12px;
 }
 
-/* ===== General ===== */
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
+
 body{
-  display:grid;
-  grid-template-columns:240px 1fr;
-  min-height:100vh;
-  background:var(--bg);
-  color:var(--text);
+  background: var(--bg);
+  color: var(--text);
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+  transition: all 0.3s ease;
 }
 
-/* ===== Sidebar ===== */
 .sidebar{
   background:#131921;
   padding:28px 20px;
   border-right:1px solid var(--border);
   display:flex;
   flex-direction:column;
-  position:fixed;
-  top:0;
-  left:0;
-  height:100vh;
-  width:240px;
-  transform:translateX(0);
-  transition:transform 0.3s ease;
-  z-index:1001;
+  transition: transform 0.3s ease;
 }
-.sidebar.hide{transform:translateX(-100%);}
+
+.sidebar.hide{transform: translateX(-100%);}
+
 .brand{
-  font-size:22px;
+  font-size: clamp(18px, 2vw, 22px);
   font-weight:800;
   color:var(--accent);
   margin-bottom:40px;
 }
+
 .nav a{
   display:block;
   padding:12px 16px;
-  margin-bottom:6px;
   border-radius:8px;
-  text-decoration:none;
   color:var(--muted);
-  font-size:14px;
+  text-decoration:none;
+  font-size: clamp(14px, 1.2vw, 16px);
+  margin-bottom:5px;
 }
+
 .nav a.active,
-.nav a:hover{ background:var(--panel-soft); color:#fff; }
+.nav a:hover{background: var(--panel-soft); color:#fff;}
 
-/* ===== Overlay ===== */
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.5);
-  display:none;
-  z-index:1000;
-}
-.overlay.show{display:block;}
-
-/* ===== Main ===== */
-.main{
-  margin-left:240px;
-  transition:margin-left 0.3s ease;
-  padding:20px 40px;
-}
-body.sidebar-hide .main{margin-left:0;}
-
-/* ===== Header ===== */
 .header{
+  position:sticky;
+  top:0;
+  background:#0f1111;
+  border-bottom:1px solid var(--border);
+  padding: clamp(16px, 2vw, 24px) clamp(20px, 4vw, 40px);
   display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:var(--gap);
-  flex-wrap:wrap;
-  margin-bottom:20px;
-}
-.header h1{font-size:24px;}
-.header .actions{display:flex; gap:var(--gap);}
-.header .menu-btn{
-  display:none;
-  background:none;
-  border:none;
-  font-size:26px;
-  color:var(--accent);
-  cursor:pointer;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  z-index:10;
 }
 
-/* ===== Controls ===== */
-.controls{
-  display:flex;
-  gap:var(--gap);
-  margin-bottom:20px;
-}
-.controls input{
-  flex:1;
-  padding:12px;
-  border-radius:var(--radius);
-  border:1px solid var(--border);
-  background:var(--panel);
-  color:#fff;
-}
-.controls input:focus{
-  outline:none;
-  border-color:var(--accent);
-  box-shadow:0 0 0 2px rgba(246,255,0,0.15);
-}
+.header h1{font-size: clamp(20px, 3vw, 30px);}
 
-/* ===== Table ===== */
-.table-wrapper{ display:grid; gap:var(--gap); }
-.table-header, .table-row{
-  display:grid;
-  grid-template-columns:1.5fr 1fr 1fr 1.5fr 1fr 1.5fr auto;
-  gap:10px;
-}
-.table-header{ font-size:12px; color:var(--muted); }
-.table-row{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:12px 16px;
-  transition:border-color 0.2s;
-}
-.table-row:hover{ border-color:var(--accent); }
+#menuToggle{display:none;font-size:24px;background:none;border:none;color:var(--accent);cursor:pointer;}
 
-/* ===== Buttons ===== */
+.content{padding: clamp(20px, 4vw, 40px);}
+
 .action-btn{
   background:var(--accent);
-  color:#111;
   border:none;
-  border-radius:6px;
+  color:#111;
   padding:10px 18px;
+  border-radius:6px;
   font-weight:700;
   cursor:pointer;
-  transition:0.2s;
+  width: max-content;
+  min-width: 120px;
+  margin: 5px 5px 5px 0;
+  font-size: clamp(14px, 1.2vw, 16px);
 }
-.action-btn:hover{filter:brightness(1.1);}
-.action-btn.danger{ background:var(--danger); color:#fff; }
 
-/* ===== Modal ===== */
-.modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.75);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:1002;
-}
-.modal{
-  width:520px;
-  max-width:95%;
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:30px;
-  display:flex;
-  flex-direction:column;
-}
-.modal h2{
-  color:var(--accent);
-  font-size:22px;
-  margin-bottom:20px;
-}
-.modal label{
-  color:var(--muted);
-  font-size:13px;
-  margin-bottom:6px;
-  display:block;
-}
-.modal input, .modal select{
+.action-btn.danger{background: var(--danger);color:#fff;}
+
+select,input{
   width:100%;
   padding:12px;
-  border-radius:8px;
+  background: var(--panel);
   border:1px solid var(--border);
-  background:#141919;
+  border-radius:8px;
   color:#fff;
-  margin-bottom:16px;
-}
-.modal input:focus, .modal select:focus{
-  outline:none;
-  border-color:var(--accent);
-  box-shadow:0 0 0 2px rgba(246,255,0,0.15);
-}
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-.form-full{ grid-column:1 / -1; }
-.modal-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-  margin-top:20px;
+  margin-bottom:14px;
+  font-size: 14px;
 }
 
-/* ===== MOBILE ≤400px ===== */
-@media(max-width:400px){
-  body{display:block;}
-  .sidebar{position:fixed;transform:translateX(-100%);width:240px;}
-  .overlay{display:none;}
-  .header{flex-direction:row; align-items:center; margin-bottom:12px;}
-  .header h1{font-size:18px; flex:1;}
-  .header .menu-btn{display:block;}
-  .header .actions{display:none;}
-  .main{margin-left:0; padding:12px;}
-  .controls{flex-direction:column; gap:8px;}
-  .controls input{font-size:14px; padding:12px;}
-  .table-header{display:none;}
-  .table-row{display:flex; flex-direction:column; gap:6px; font-size:13px; padding:12px;}
-  .table-row div{width:100%;}
-  .action-btn{width:100%; margin-top:6px;}
-  .modal{width:95%; padding:16px;}
-  .modal h2{font-size:20px;}
-  .form-grid{grid-template-columns:1fr; gap:10px;}
-  .modal input, .modal select{padding:12px; font-size:14px;}
-  .modal-actions{flex-direction:column;}
+.table-wrapper{margin-top:20px;}
+.table-row{
+  background: var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px 16px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:8px;
+  margin-bottom:10px;
 }
 
-/* ===== ULTRA-WIDE ≥2450px ===== */
-/* ===== DESKTOP IMPROVEMENTS ===== */
-@media(min-width:1024px){
-  /* Sidebar width scales */
-  .sidebar{
-    width:calc(240px + (100vw - 1024px)/10);
-    max-width:400px;
-    padding:32px;
-  }
-  .main{
-    margin-left:calc(240px + (100vw - 1024px)/10);
-    padding:32px 60px;
-  }
-  .header h1{font-size:28px;}
-  .controls input{max-width:600px; font-size:16px; padding:14px;}
-  
-  /* Table columns scale nicely */
-  .table-header, .table-row{
-    grid-template-columns:
-      minmax(180px,2fr)
-      minmax(100px,1fr)
-      minmax(100px,1fr)
-      minmax(160px,2fr)
-      minmax(80px,1fr)
-      minmax(140px,2fr)
-      auto;
-  }
-  .table-row{padding:16px 20px; font-size:15px;}
+.table-header{
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:8px;
+  font-weight:bold;
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:8px;
 }
 
-/* ===== ULTRA-WIDE ≥2450px ===== */
-@media(min-width:2450px){
-  .sidebar{width:400px; padding:40px 40px;}
-  .main{margin-left:400px; padding:60px 100px;}
-  .header h1{font-size:36px;}
-  .controls input{max-width:800px; font-size:18px; padding:18px;}
-  .table-header, .table-row{
-    grid-template-columns:
-      minmax(250px,2.5fr)
-      minmax(120px,1.2fr)
-      minmax(120px,1.2fr)
-      minmax(200px,2.5fr)
-      minmax(100px,1fr)
-      minmax(180px,2fr)
-      auto;
-    font-size:18px;
-  }
-  .table-row{padding:20px 28px;}
-  .modal{width:720px; padding:48px;}
-  .modal h2{font-size:32px;}
-  .modal input, .modal select{padding:18px; font-size:18px;}
+.modal-overlay{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:#00000080;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
 }
 
+.modal-overlay.show{display:flex;}
+
+.modal{
+  background: var(--panel);
+  padding:20px;
+  border-radius:12px;
+  width:90%;
+  max-width:500px;
+}
+
+.modal h2{margin-bottom:20px;}
+
+.modal-actions{text-align:right;}
+
+button:hover,select:hover{border:1px solid var(--accent);}
+
+/* Responsive */
+@media (max-width: 900px){
+  body{grid-template-columns:1fr;}
+  .sidebar{position:fixed;top:0;left:0;height:100vh;z-index:1000;transform:translateX(-100%);}
+  .sidebar.show{transform:translateX(0);}
+  #menuToggle{display:inline-block;}
+  .overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#00000080;z-index:500;}
+  .overlay.show{display:block;}
+  .table-row, .table-header{grid-template-columns:1fr;grid-template-rows:repeat(7, auto);}
+  .table-row button{width:100%; margin-top:5px;}
+}
 </style>
 </head>
 <body>
@@ -305,7 +184,7 @@ body.sidebar-hide .main{margin-left:0;}
 <div class="main">
   <div class="header">
     <h1>Student DB Management</h1>
-    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    <button id="menuToggle" onclick="toggleSidebar()">☰</button>
     <div class="actions">
       <button class="action-btn" onclick="openNew()">+ Add Student</button>
       <button class="action-btn danger" onclick="logout()">Logout</button>
@@ -313,9 +192,7 @@ body.sidebar-hide .main{margin-left:0;}
   </div>
 
   <div class="content">
-    <div class="controls">
-      <input placeholder="Search..." oninput="search(this.value)">
-    </div>
+    <input placeholder="Search..." oninput="search(this.value)">
     <div class="table-wrapper">
       <div class="table-header">
         <div>Name</div><div>Roll No</div><div>Class</div>
@@ -330,47 +207,31 @@ body.sidebar-hide .main{margin-left:0;}
 <div class="modal-overlay" id="modal" onclick="closeModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <h2 id="modal_title">Add Student</h2>
-    <input id="d_facultyemail" style="display:none">
     <div class="form-grid">
-      <div class="form-full">
-        <label>Name</label>
-        <input id="d_name" placeholder="Student name">
-      </div>
-      <div>
-        <label>Roll No</label>
-        <input id="d_rollno">
-      </div>
-      <div>
-        <label>Class</label>
-        <select id="d_class">
-          <option value="">Select Class</option>
-          <option>UG I Year</option>
-          <option>UG II Year</option>
-          <option>UG III Year</option>
-          <option>PG I Year</option>
-          <option>PG II Year</option>
-        </select>
-      </div>
-      <div class="form-full">
-        <label>Department</label>
-        <select id="d_department">
-          <option value="">Select Department</option>
-          <option>Department of Computer Science (SF)</option>
-          <option>Department of Tamil (SF)</option>
-        </select>
-      </div>
-      <div>
-        <label>Section</label>
-        <select id="d_mainadd">
-          <option value="">Select Section</option>
-          <option>Main</option>
-          <option>Additional</option>
-        </select>
-      </div>
-      <div>
-        <label>Parents Phone No</label>
-        <input id="d_parentph">
-      </div>
+      <label>Name</label><input id="d_name" placeholder="Student name">
+      <label>Roll No</label><input id="d_rollno">
+      <label>Class</label>
+      <select id="d_class">
+        <option value="">Select Class</option>
+        <option>UG I Year</option>
+        <option>UG II Year</option>
+        <option>UG III Year</option>
+        <option>PG I Year</option>
+        <option>PG II Year</option>
+      </select>
+      <label>Department</label>
+      <select id="d_department">
+        <option value="">Select Department</option>
+        <option>Department of Computer Science (SF)</option>
+        <option>Department of Tamil (SF)</option>
+      </select>
+      <label>Section</label>
+      <select id="d_mainadd">
+        <option value="">Select Section</option>
+        <option>Main</option>
+        <option>Additional</option>
+      </select>
+      <label>Parents Phone No</label><input id="d_parentph">
     </div>
     <div class="modal-actions">
       <button class="action-btn" onclick="save()">Save</button>
@@ -395,6 +256,7 @@ async function fetchData(){
   filtered = users.filter(u=>u.FacultyEmail===facultyEmailFromSession);
   render();
 }
+
 function render(){
   list.innerHTML="";
   filtered.forEach((u,i)=>{
@@ -413,17 +275,21 @@ function render(){
     </div>`;
   });
 }
-function openNew(){ isNew=true; modal.style.display="flex"; }
-function edit(i){
-  isNew=false; current=filtered[i];
-  d_name.value=current.Name;
-  d_rollno.value=current.Rollno;
-  d_class.value=current.Class;
-  d_department.value=current.Department;
-  d_mainadd.value=current.Section;
-  d_parentph.value=current.ParentsPhNo;
-  modal.style.display="flex";
+
+function openNew(){ isNew=true; modal.classList.add('show'); clearModal(); }
+function edit(i){ 
+  isNew=false; current=filtered[i]; 
+  d_name.value=current.Name; d_rollno.value=current.Rollno; 
+  d_class.value=current.Class; d_department.value=current.Department; 
+  d_mainadd.value=current.Section; d_parentph.value=current.ParentsPhNo;
+  modal.classList.add('show');
 }
+
+function clearModal(){
+  d_name.value=''; d_rollno.value=''; d_class.value=''; 
+  d_department.value=''; d_mainadd.value=''; d_parentph.value='';
+}
+
 async function save(){
   const payload={
     FacultyEmail:facultyEmailFromSession,
@@ -434,25 +300,34 @@ async function save(){
     Section:d_mainadd.value,
     ParentsPhNo:d_parentph.value
   };
-  isNew
-    ? await supabase1.from("StudentDB").insert([payload])
-    : await supabase1.from("StudentDB").update(payload).eq("id",current.id);
+  if(isNew){
+    await supabase1.from("StudentDB").insert([payload]);
+  } else{
+    await supabase1.from("StudentDB").update(payload).eq("id",current.id);
+  }
   closeModal(); fetchData();
 }
-function delUser(r){ if(confirm("Delete student?")){ supabase1.from("StudentDB").delete().eq("Rollno",r); fetchData(); } }
-function closeModal(e){ if(!e || e.target===modal) modal.style.display="none"; }
+
+function delUser(r){
+  if(confirm("Delete student?")){
+    supabase1.from("StudentDB").delete().eq("Rollno",r).then(fetchData);
+  }
+}
+
+function closeModal(e){ 
+  if(!e || e.target===modal) modal.classList.remove('show'); 
+}
+
 function logout(){ sessionStorage.clear(); location.href="index.html"; }
 
-/* Sidebar Toggle */
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
-function toggleSidebar(){ 
-  sidebar.classList.toggle('hide'); 
-  overlay.classList.toggle('show'); 
-}
-function closeSidebar(){ 
-  sidebar.classList.add('hide'); 
-  overlay.classList.remove('show'); 
+function toggleSidebar(){ sidebar.classList.toggle('show'); overlay.classList.toggle('show'); }
+function closeSidebar(){ sidebar.classList.remove('show'); overlay.classList.remove('show'); }
+
+function search(q){
+  filtered = users.filter(u=>u.FacultyEmail===facultyEmailFromSession && u.Name.toLowerCase().includes(q.toLowerCase()));
+  render();
 }
 
 fetchData();
@@ -460,4 +335,3 @@ fetchData();
 
 </body>
 </html>
-
