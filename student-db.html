@@ -38,9 +38,16 @@ body{
   border-right:1px solid var(--border);
   display:flex;
   flex-direction:column;
-  transition: transform 0.3s ease;
+  position:fixed;
+  top:0;
+  left:0;
+  height:100vh;
+  width:240px;
+  transform:translateX(0);
+  transition:transform 0.3s ease;
+  z-index:1001;
 }
-.sidebar.hide{transform:translateX(-100%);}
+.sidebar.hide{ transform:translateX(-100%); }
 .brand{
   font-size: clamp(18px,2vw,28px);
   font-weight:800;
@@ -59,6 +66,16 @@ body{
 .nav a.active,
 .nav a:hover{ background:var(--panel-soft); color:#fff; }
 
+/* ===== Overlay ===== */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  z-index:1000;
+}
+.overlay.show{ display:block; }
+
 /* ===== Header ===== */
 .header{
   position:sticky;
@@ -73,6 +90,14 @@ body{
 }
 .header h1{ font-size:clamp(20px,3vw,30px); }
 .header .actions{ display:flex; gap:var(--gap); }
+.header .menu-btn{
+  display:none;
+  background:none;
+  border:none;
+  font-size:24px;
+  color:var(--accent);
+  cursor:pointer;
+}
 
 /* ===== Controls ===== */
 .controls{
@@ -133,7 +158,7 @@ body{
   display:none;
   align-items:center;
   justify-content:center;
-  z-index:1000;
+  z-index:1002;
 }
 .modal{
   width:520px;
@@ -186,10 +211,11 @@ body{
 /* ===== Mobile ≤400px ===== */
 @media (max-width:400px){
   body{ grid-template-columns:1fr; }
-  .sidebar{ width:240px; transform:translateX(-100%); position:fixed; top:0; left:0; height:100vh; z-index:1000; }
-  .header{ flex-direction:column; align-items:flex-start; gap:10px; padding:12px 16px; }
-  .header h1{ font-size:20px; }
-  .header .actions{ width:100%; flex-direction:column; gap:6px; }
+  .sidebar{ transform:translateX(-100%); position:fixed; top:0; left:0; height:100vh; z-index:1001; }
+  .header{ flex-direction:row; align-items:center; padding:12px 16px; }
+  .header h1{ font-size:18px; flex:1; }
+  .header .menu-btn{ display:block; }
+  .header .actions{ display:none; }
   .controls{ flex-direction:column; gap:8px; }
   .controls input{ font-size:14px; padding:12px; }
   .table-header{ display:none; }
@@ -210,7 +236,6 @@ body{
   .brand{ font-size:32px; }
   .header{ padding:40px 80px; }
   .header h1{ font-size:36px; }
-  .header .actions .action-btn{ padding:16px 28px; font-size:18px; }
   .controls input{ font-size:16px; padding:16px; max-width:800px; }
   .table-header, .table-row{ grid-template-columns:2fr 1.2fr 1.2fr 1.6fr 1fr 1.6fr auto; font-size:16px; }
   .table-row{ padding:18px 24px; }
@@ -219,21 +244,25 @@ body{
   .modal input, .modal select{ padding:16px; font-size:16px; }
 }
 </style>
-
 </head>
+
 <body>
 
-<aside class="sidebar">
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
   <div class="brand">FACULTY•CORE</div>
   <nav class="nav">
     <a href="faculty.html">Student Attendance</a>
     <a class="active" href="#">Student DB Management</a>
   </nav>
 </aside>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
+<!-- Main -->
 <div class="main">
   <div class="header">
     <h1>Student DB Management</h1>
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
     <div class="actions">
       <button class="action-btn" onclick="openNew()">+ Add Student</button>
       <button class="action-btn danger" onclick="logout()">Logout</button>
@@ -244,7 +273,6 @@ body{
     <div class="controls">
       <input placeholder="Search..." oninput="search(this.value)">
     </div>
-
     <div class="table-wrapper">
       <div class="table-header">
         <div>Name</div><div>Roll No</div><div>Class</div>
@@ -258,21 +286,17 @@ body{
 <!-- Modal -->
 <div class="modal-overlay" id="modal" onclick="closeModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
-
     <h2 id="modal_title">Add Student</h2>
     <input id="d_facultyemail" style="display:none">
-
     <div class="form-grid">
       <div class="form-full">
         <label>Name</label>
         <input id="d_name" placeholder="Student name">
       </div>
-
       <div>
         <label>Roll No</label>
         <input id="d_rollno">
       </div>
-
       <div>
         <label>Class</label>
         <select id="d_class">
@@ -284,7 +308,6 @@ body{
           <option>PG II Year</option>
         </select>
       </div>
-
       <div class="form-full">
         <label>Department</label>
         <select id="d_department">
@@ -293,7 +316,6 @@ body{
           <option>Department of Tamil (SF)</option>
         </select>
       </div>
-
       <div>
         <label>Section</label>
         <select id="d_mainadd">
@@ -302,18 +324,15 @@ body{
           <option>Additional</option>
         </select>
       </div>
-
       <div>
         <label>Parents Phone No</label>
         <input id="d_parentph">
       </div>
     </div>
-
     <div class="modal-actions">
       <button class="action-btn" onclick="save()">Save</button>
       <button class="action-btn danger" onclick="closeModal()">Cancel</button>
     </div>
-
   </div>
 </div>
 
@@ -354,7 +373,6 @@ function render(){
 }
 
 function openNew(){ isNew=true; modal.style.display="flex"; }
-
 function edit(i){
   isNew=false; current=filtered[i];
   d_name.value=current.Name;
@@ -365,7 +383,6 @@ function edit(i){
   d_parentph.value=current.ParentsPhNo;
   modal.style.display="flex";
 }
-
 async function save(){
   const payload={
     FacultyEmail:facultyEmailFromSession,
@@ -381,16 +398,21 @@ async function save(){
     : await supabase1.from("StudentDB").update(payload).eq("id",current.id);
   closeModal(); fetchData();
 }
-
-function delUser(r){
-  if(confirm("Delete student?")){
-    supabase1.from("StudentDB").delete().eq("Rollno",r);
-    fetchData();
-  }
-}
-
+function delUser(r){ if(confirm("Delete student?")){ supabase1.from("StudentDB").delete().eq("Rollno",r); fetchData(); } }
 function closeModal(e){ if(!e || e.target===modal) modal.style.display="none"; }
 function logout(){ sessionStorage.clear(); location.href="index.html"; }
+
+/* ===== Sidebar Toggle ===== */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+function toggleSidebar(){
+  sidebar.classList.toggle('hide');
+  overlay.classList.toggle('show');
+}
+function closeSidebar(){
+  sidebar.classList.add('hide');
+  overlay.classList.remove('show');
+}
 
 fetchData();
 </script>
