@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Faculty – Ultra Attendance Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+html,body{height:100%;background:#0f0c29;overflow-x:hidden;color:#fff;}
+
+/* Background animation */
+.animated-bg{position:fixed;width:100%;height:100%;background:linear-gradient(-45deg,#0f0c29,#302b63,#24243e,#1a1a2e);background-size:400% 400%;animation:gradientMove 12s ease infinite;z-index:-3;}
+@keyframes gradientMove{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+
+.particles{position:fixed;width:100%;height:100%;background-image:radial-gradient(#ffffff22 1px, transparent 1px);background-size:40px 40px;animation:moveParticles 60s linear infinite;z-index:-2;}
+@keyframes moveParticles{from{transform:translateY(0);} to{transform:translateY(-1000px);}}
+
+body{display:grid;grid-template-columns:260px 1fr;transition:0.3s;}
+
+/* Sidebar */
+.sidebar{
+  backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.05);
+  border-right:1px solid rgba(255,255,255,0.1);
+  padding:30px 20px;
+  display:flex;
+  flex-direction:column;
+  transition:0.3s;
+}
+.brand{font-size:22px;font-weight:700;margin-bottom:40px;color:#00f7ff;letter-spacing:2px;}
+.nav a{display:block;padding:12px 16px;border-radius:10px;color:#ccc;text-decoration:none;margin-bottom:10px;transition:0.3s;}
+.nav a:hover, .nav a.active{background:linear-gradient(135deg,#6a00ff,#00f7ff);color:#fff;box-shadow:0 0 20px #00f7ff;}
+
+/* Sidebar toggle for mobile */
+#menuToggle{display:none;font-size:26px;background:none;border:none;color:#00f7ff;cursor:pointer;}
+
+/* Header */
+.header{
+  backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.05);
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  padding:20px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.header h1{font-size:26px;letter-spacing:1px;}
+
+/* Content */
+.content{padding:40px;}
+
+/* Form / Ultra Select */
+form{backdrop-filter:blur(20px);background:rgba(255,255,255,0.05);padding:30px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);margin-top:20px;max-width:500px;}
+.ultra-select{position:relative;margin-bottom:18px;}
+.ultra-select select{width:100%;padding:14px 45px 14px 15px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);backdrop-filter:blur(15px);color:#fff;font-size:15px;outline:none;appearance:none;cursor:pointer;transition:0.3s;}
+.ultra-select select:focus{border:1px solid #00f7ff;box-shadow:0 0 20px #00f7ff55;}
+.ultra-select::after{content:"▼";position:absolute;right:15px;top:50%;transform:translateY(-50%);color:#00f7ff;font-size:14px;pointer-events:none;transition:0.3s;}
+.ultra-select select:focus + .ultra-select::after{transform:translateY(-50%) rotate(180deg);}
+.ultra-select select option{background:#1a1a2e;color:#fff;padding:10px;}
+.ultra-select select:hover{transform:translateY(-2px);box-shadow:0 0 15px #6a00ff55;}
+
+/* Buttons */
+.action-btn{background:linear-gradient(135deg,#6a00ff,#00f7ff);border:none;color:#fff;padding:12px 20px;border-radius:30px;cursor:pointer;font-weight:600;transition:0.3s;margin:10px 5px 0 0;}
+.action-btn:hover{transform:translateY(-3px);box-shadow:0 0 20px #00f7ff;}
+.danger{background:linear-gradient(135deg,#ff004c,#ff4d4d);}
+
+/* Student List */
+.table-row{backdrop-filter:blur(20px);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:15px;padding:15px 20px;margin-bottom:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;transition:0.3s;}
+.table-row:hover{box-shadow:0 0 20px #6a00ff55;transform:translateY(-4px);}
+.status-btn{padding:8px 18px;border:none;border-radius:20px;font-weight:600;cursor:pointer;}
+.present{background:#00ff88;color:#000;}
+.absent{background:#ff4d4d;color:#fff;}
+
+/* Responsive */
+@media(max-width:900px){
+  body{grid-template-columns:1fr;}
+  .sidebar{position:fixed;top:0;left:-100%;height:100vh;z-index:1000;transition:0.3s;}
+  .sidebar.show{left:0;}
+  #menuToggle{display:inline-block;margin-bottom:10px;}
+  .header{flex-direction:column;align-items:flex-start;}
+  form{width:95%;padding:20px;}
+  .table-row{flex-direction:column;align-items:flex-start;}
+  .status-btn{margin-top:8px;width:100%;}
+  .action-btn{width:100%;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="animated-bg"></div>
+<div class="particles"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="brand">FACULTY•CORE</div>
+  <nav class="nav">
+    <a class="active" href="#">Student Attendance</a>
+    <a href="student-db.html">Student DB Management</a>
+  </nav>
+</aside>
+
+<!-- Main Content -->
+<div>
+  <div class="header">
+    <button id="menuToggle" onclick="toggleSidebar()">☰</button>
+    <h1>Student Attendance</h1>
+    <button class="action-btn danger" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="content">
+    <button class="action-btn" onclick="toggleAttendance()">+ Create New Attendance</button>
+
+    <form id="attendanceForm" style="display:none;">
+      <div class="ultra-select">
+        <select id="dept" required>
+          <option value="">Select Department</option>
+          <option>Department of Tamil (AIDED)</option>
+          <option>Department of English (AIDED)</option>
+          <option>Department of Mathematics (AIDED)</option>
+          <option>Department of Physics (AIDED)</option>
+          <option>Department of Chemistry (AIDED)</option>
+          <option>Department of Botany (AIDED)</option>
+          <option>Department of Zoology (AIDED)</option>
+          <option>Department of Biochemistry (AIDED)</option>
+          <option>Department of Computer Science (AIDED)</option>
+          <option>Department of Tamil (SF)</option>
+          <option>Department of English (SF)</option>
+          <option>Department of Mathematics (SF)</option>
+          <option>Department of Biotechnology (SF)</option>
+          <option>Department of Chemistry (PG) (SF)</option>
+          <option>Department of Commerce (SF)</option>
+          <option>Department of Commerce CA (SF)</option>
+          <option>Department of Computer Science (SF)</option>
+          <option>Department of Computer Technology (SF)</option>
+          <option>Department of Computer Application (SF)</option>
+          <option>Department of Costume Design and Fashion (SF)</option>
+          <option>Department of Biochemistry (SF)</option>
+          <option>Department of Information Technology (SF)</option>
+          <option>Department of Business Administration with CA (SF)</option>
+          <option>Department of Commerce PA (SF)</option>
+          <option>Department of Commerce (PG) (SF)</option>
+          <option>Department of Commerce Banking & Insurance (SF)</option>
+          <option>Department of Commerce Accounting and Finance (SF)</option>
+          <option>Department of Psychology (SF)</option>
+          <option>Department of Computer Science with Data Analytics (SF)</option>
+          <option>Department of Artificial Intelligence and Machine Learning (SF)</option>
+          <option>Department of Commerce IT (SF)</option>
+          <option>Department of Commerce Business Analytics (SF)</option>
+          <option>Department of Clinical Nutrition (SF)</option>
+          <option>Department of Wildlife Biology (SF)</option>
+          
+        </select>
+      </div>
+      <div class="ultra-select">
+        <select id="cls" required>
+          <option value="">Select Class</option>
+          <option>UG I Year</option>
+          <option>UG II Year</option>
+          <option>UG III Year</option>
+          <option>PG I Year</option>
+          <option>PG II Year</option>
+        </select>
+      </div>
+      <div class="ultra-select">
+        <select id="sec" required>
+          <option value="">Select Section</option>
+          <option>Main</option>
+          <option>Additional</option>
+        </select>
+      </div>
+      <button class="action-btn" type="submit">Load Students</button>
+    </form>
+
+    <div id="studentList" style="margin-top:30px;"></div>
+
+    <button id="smsBtn" class="action-btn" style="display:none;" onclick="sendParentSMS()">Parents SMS Notification</button>
+    <button id="saveBtn" class="action-btn" style="display:none;" onclick="saveAttendance()">Save Attendance</button>
+
+    <div id="smsLinks" style="margin-top:20px;"></div>
+  </div>
+</div>
+
+<script>
+const supabaseclient = supabase.createClient(
+  "https://wljlkyfxlgnhkltdltng.supabase.co",
+  "sb_publishable_i0HnA_T0MaU3M5z_qN_Grg_YaGpDgvf"
+);
+
+const facultyEmailFromSession = sessionStorage.getItem('Email') || '';
+let attendanceData = [];
+var FacultyEmail = facultyEmailFromSession;
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('show');
+}
+
+function toggleAttendance(){
+  document.getElementById("attendanceForm").style.display='block';
+}
+
+document.getElementById("attendanceForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+
+  const { data, error } = await supabaseclient
+    .from("StudentDB")
+    .select("*")
+    .eq("Department", dept.value)
+    .eq("Class", cls.value)
+    .eq("Section", sec.value);
+
+  if(error || data.length === 0){
+    alert("No students found");
+    return;
+  }
+
+  attendanceData = data.map(s => ({...s, status:"Present", FacultyEmail:FacultyEmail}));
+  renderStudents();
+});
+
+function renderStudents(){
+  const container = document.getElementById("studentList");
+  container.innerHTML = "";
+
+  attendanceData.forEach((s,i)=>{
+    container.innerHTML += `
+      <div class="table-row">
+        <div>${s.Rollno} - ${s.Name}</div>
+        <button class="status-btn ${s.status==="Present"?"present":"absent"}" onclick="toggleStatus(${i})">${s.status}</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("saveBtn").style.display="inline-block";
+}
+
+function toggleStatus(i){
+  attendanceData[i].status =
+    attendanceData[i].status === "Present" ? "Absent" : "Present";
+  renderStudents();
+}
+
+async function saveAttendance(){
+  const records = attendanceData.map(s=>({
+    FacultyEmail:s.FacultyEmail,
+    Rollno:s.Rollno,
+    Attendance:s.status
+  }));
+
+  const { error } = await supabaseclient.from("AttendanceDB").insert(records);
+
+  if(error){
+    alert("Error saving attendance");
+  }else{
+    alert("Attendance saved successfully");
+    document.getElementById("smsBtn").style.display="inline-block";
+  }
+}
+
+async function sendParentSMS() {
+    const smsContainer = document.getElementById("smsLinks");
+    smsContainer.innerHTML = "";
+
+    const absentees = attendanceData.filter(s => s.status === "Absent");
+
+    if (absentees.length === 0) {
+        smsContainer.innerHTML = "<p>No absent students.</p>";
+        return;
+    }
+
+    const { data: parentsData, error } = await supabaseclient
+        .from("StudentDB")
+        .select("ParentsPhNo")
+        .in("Rollno", absentees.map(s => s.Rollno));
+
+    if (error || !parentsData || parentsData.length === 0) {
+        alert("Failed to fetch parents' phone numbers.");
+        return;
+    }
+
+    const parentNumbers = parentsData.map(p => p.ParentsPhNo).join(",");
+
+    const Faculty_Name = sessionStorage.getItem("FacultyName")||"Faculty";
+    const Professor = sessionStorage.getItem("Professor")||"Professor";
+    const Faculty_Department = sessionStorage.getItem("FacultyDepartment")||"Department";
+
+    const message = `
+Dear Parent,
+This is to inform you that your child was absent for today’s class.
+
+- ${Faculty_Name}, 
+${Professor},
+${Faculty_Department}, 
+Kongunadu Arts and Science College (Autonomous),
+GN Mills,
+Coimbatore - 641029`;
+
+    const smsLink = document.createElement("a");
+    smsLink.href = `sms:${parentNumbers}?body=${encodeURIComponent(message)}`;
+    smsLink.textContent = "Send SMS to all absent students' parents";
+    smsLink.style.display = "block";
+    smsLink.style.marginBottom = "10px";
+
+    smsContainer.appendChild(smsLink);
+}
+
+function logout(){ sessionStorage.clear(); location.href="index.html"; }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Faculty – Student DB Management</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:260px 1fr;
+  color:#fff;
+  background:linear-gradient(-45deg,#0f0c29,#302b63,#24243e,#1a1a2e);
+  background-size:400% 400%;
+  animation:gradientMove 12s ease infinite;
+}
+
+@keyframes gradientMove{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.05);
+  border-right:1px solid rgba(255,255,255,0.1);
+  padding:30px 20px;
+  transition:.3s;
+}
+
+.brand{
+  font-size:22px;
+  font-weight:700;
+  color:#00f7ff;
+  margin-bottom:40px;
+}
+
+.nav a{
+  display:block;
+  padding:12px 16px;
+  border-radius:10px;
+  color:#ccc;
+  text-decoration:none;
+  margin-bottom:10px;
+  transition:.3s;
+}
+
+.nav a:hover,
+.nav a.active{
+  background:linear-gradient(135deg,#6a00ff,#00f7ff);
+  color:#fff;
+  box-shadow:0 0 20px #00f7ff;
+}
+
+/* ===== HEADER ===== */
+.header{
+  backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.05);
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  padding:20px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.header h1{font-size:24px}
+
+#menuToggle{
+  display:none;
+  font-size:24px;
+  background:none;
+  border:none;
+  color:#00f7ff;
+  cursor:pointer;
+}
+
+/* ===== CONTENT ===== */
+.content{padding:40px}
+
+input{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.05);
+  color:#fff;
+  margin-bottom:15px;
+}
+
+/* ===== ULTRA SELECT ===== */
+.select-wrapper{
+  position:relative;
+  margin-bottom:15px;
+}
+
+.select-wrapper select{
+  width:100%;
+  padding:12px 40px 12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.05);
+  color:#fff;
+  appearance:none;
+  outline:none;
+  cursor:pointer;
+}
+
+.select-wrapper select:focus{
+  border-color:#00f7ff;
+  box-shadow:0 0 15px #00f7ff55;
+}
+
+.select-wrapper::after{
+  content:"▼";
+  position:absolute;
+  right:15px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#00f7ff;
+  pointer-events:none;
+}
+
+select option{
+  background:#1a1a2e;
+  color:#fff;
+}
+
+/* ===== TABLE ===== */
+.table-wrapper{margin-top:20px}
+
+.table-header,
+.table-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+  padding:15px;
+}
+
+.table-header{
+  font-weight:600;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.table-row{
+  backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.05);
+  border-radius:15px;
+  margin-bottom:12px;
+  transition:.3s;
+}
+
+.table-row:hover{
+  transform:translateY(-4px);
+  box-shadow:0 0 25px #6a00ff55;
+}
+
+/* ===== BUTTONS ===== */
+.action-btn{
+  background:linear-gradient(135deg,#6a00ff,#00f7ff);
+  border:none;
+  color:#fff;
+  padding:8px 14px;
+  border-radius:30px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.3s;
+  margin-right:5px;
+}
+
+.action-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px #00f7ff;
+}
+
+.danger{
+  background:linear-gradient(135deg,#ff004c,#ff4d4d);
+}
+
+/* ===== MODAL ===== */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
+
+.modal-overlay.show{display:flex;}
+
+.modal{
+  width:95%;
+  max-width:500px;
+  backdrop-filter:blur(25px);
+  background:rgba(255,255,255,0.05);
+  border-radius:20px;
+  padding:25px;
+}
+
+.modal h2{margin-bottom:20px}
+
+.modal-actions{text-align:right}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1000px){
+  body{grid-template-columns:1fr;}
+  .sidebar{
+    position:fixed;
+    left:-260px;
+    top:0;
+    height:100%;
+    z-index:1000;
+  }
+  .sidebar.show{left:0;}
+  #menuToggle{display:inline-block;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="brand">FACULTY•CORE</div>
+  <nav class="nav">
+    <a href="faculty.html">Student Attendance</a>
+    <a class="active" href="#">Student DB Management</a>
+  </nav>
+</aside>
+
+<div class="main">
+  <div class="header">
+    <button id="menuToggle" onclick="toggleSidebar()">☰</button>
+    <h1>Student DB Management</h1>
+    <div>
+      <button class="action-btn" onclick="openNew()">+ Add Student</button>
+      <button class="action-btn danger" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <input placeholder="Search..." oninput="search(this.value)">
+    <div class="table-wrapper">
+      <div class="table-header">
+        <div>Name</div>
+        <div>Roll No</div>
+        <div>Class</div>
+        <div>Department</div>
+        <div>Section</div>
+        <div>Parents Mobile</div>
+        <div>Actions</div>
+      </div>
+      <div id="list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2>Add Student</h2>
+
+    <input id="d_name" placeholder="Student name">
+    <input id="d_rollno" placeholder="Roll No">
+
+    <div class="select-wrapper">
+      <select id="d_class">
+        <option value="">Select Class</option>
+        <option>UG I Year</option>
+        <option>UG II Year</option>
+        <option>UG III Year</option>
+        <option>PG I Year</option>
+        <option>PG II Year</option>
+      </select>
+    </div>
+
+    <div class="select-wrapper">
+      <select id="d_department">
+            <option value="">Select Department</option>
+          <option>Department of Tamil (AIDED)</option>
+          <option>Department of English (AIDED)</option>
+          <option>Department of Mathematics (AIDED)</option>
+          <option>Department of Physics (AIDED)</option>
+          <option>Department of Chemistry (AIDED)</option>
+          <option>Department of Botany (AIDED)</option>
+          <option>Department of Zoology (AIDED)</option>
+          <option>Department of Biochemistry (AIDED)</option>
+          <option>Department of Computer Science (AIDED)</option>
+          <option>Department of Tamil (SF)</option>
+          <option>Department of English (SF)</option>
+          <option>Department of Mathematics (SF)</option>
+          <option>Department of Biotechnology (SF)</option>
+          <option>Department of Chemistry (PG) (SF)</option>
+          <option>Department of Commerce (SF)</option>
+          <option>Department of Commerce CA (SF)</option>
+          <option>Department of Computer Science (SF)</option>
+          <option>Department of Computer Technology (SF)</option>
+          <option>Department of Computer Application (SF)</option>
+          <option>Department of Costume Design and Fashion (SF)</option>
+          <option>Department of Biochemistry (SF)</option>
+          <option>Department of Information Technology (SF)</option>
+          <option>Department of Business Administration with CA (SF)</option>
+          <option>Department of Commerce PA (SF)</option>
+          <option>Department of Commerce (PG) (SF)</option>
+          <option>Department of Commerce Banking & Insurance (SF)</option>
+          <option>Department of Commerce Accounting and Finance (SF)</option>
+          <option>Department of Psychology (SF)</option>
+          <option>Department of Computer Science with Data Analytics (SF)</option>
+          <option>Department of Artificial Intelligence and Machine Learning (SF)</option>
+          <option>Department of Commerce IT (SF)</option>
+          <option>Department of Commerce Business Analytics (SF)</option>
+          <option>Department of Clinical Nutrition (SF)</option>
+          <option>Department of Wildlife Biology (SF)</option>
+      </select>
+    </div>
+
+    <div class="select-wrapper">
+      <select id="d_mainadd">
+        <option value="">Select Section</option>
+        <option>Main</option>
+        <option>Additional</option>
+      </select>
+    </div>
+
+    <input id="d_parentph" placeholder="Parents Phone No">
+
+    <div class="modal-actions">
+      <button class="action-btn" onclick="save()">Save</button>
+      <button class="action-btn danger" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const supabase1 = supabase.createClient(
+  "https://wljlkyfxlgnhkltdltng.supabase.co",
+  "sb_publishable_i0HnA_T0MaU3M5z_qN_Grg_YaGpDgvf"
+);
+
+let users=[], filtered=[], current=null, isNew=false;
+const facultyEmailFromSession = sessionStorage.getItem('Email') || '';
+
+async function fetchData(){
+  const {data} = await supabase1.from("StudentDB").select("*");
+  users = data || [];
+  filtered = users.filter(u=>u.FacultyEmail===facultyEmailFromSession);
+  render();
+}
+
+function render(){
+  list.innerHTML="";
+  filtered.forEach((u,i)=>{
+    list.innerHTML+=`
+    <div class="table-row">
+      <div>${u.Name}</div>
+      <div>${u.Rollno}</div>
+      <div>${u.Class}</div>
+      <div>${u.Department}</div>
+      <div>${u.Section||"-"}</div>
+      <div>${u.ParentsPhNo||"-"}</div>
+      <div>
+        <button class="action-btn" onclick="edit(${i})">Edit</button>
+        <button class="action-btn danger" onclick="delUser('${u.Rollno}')">Delete</button>
+      </div>
+    </div>`;
+  });
+}
+
+function openNew(){ isNew=true; modal.classList.add('show'); clearModal(); }
+function edit(i){ 
+  isNew=false; current=filtered[i]; 
+  d_name.value=current.Name;
+  d_rollno.value=current.Rollno;
+  d_class.value=current.Class;
+  d_department.value=current.Department;
+  d_mainadd.value=current.Section;
+  d_parentph.value=current.ParentsPhNo;
+  modal.classList.add('show');
+}
+
+function clearModal(){
+  d_name.value=''; d_rollno.value=''; d_class.value='';
+  d_department.value=''; d_mainadd.value=''; d_parentph.value='';
+}
+
+async function save(){
+  const payload={
+    FacultyEmail:facultyEmailFromSession,
+    Name:d_name.value,
+    Rollno:d_rollno.value,
+    Class:d_class.value,
+    Department:d_department.value,
+    Section:d_mainadd.value,
+    ParentsPhNo:d_parentph.value
+  };
+  if(isNew){
+    await supabase1.from("StudentDB").insert([payload]);
+  } else{
+    await supabase1.from("StudentDB").update(payload).eq("id",current.id);
+  }
+  closeModal(); fetchData();
+}
+
+function delUser(r){
+  if(confirm("Delete student?")){
+    supabase1.from("StudentDB").delete().eq("Rollno",r).then(fetchData);
+  }
+}
+
+function closeModal(e){ 
+  if(!e || e.target===modal) modal.classList.remove('show'); 
+}
+
+function logout(){ sessionStorage.clear(); location.href="index.html"; }
+
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("show");
+}
+
+function search(q){
+  filtered = users.filter(u=>u.FacultyEmail===facultyEmailFromSession &&
+    u.Name.toLowerCase().includes(q.toLowerCase()));
+  render();
+}
+
+fetchData();
+</script>
+
+</body>
+</html>

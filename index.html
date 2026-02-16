@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Attendance - Ultra UI</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+var SUPABASE_URL="https://wljlkyfxlgnhkltdltng.supabase.co";
+var SUPABASE_KEY="sb_publishable_i0HnA_T0MaU3M5z_qN_Grg_YaGpDgvf";
+
+const supabase1 = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function Lg() {
+  const jEmail = document.getElementById('email').value;
+  const jPass = document.getElementById('pass').value;
+  const alertBox = document.getElementById('alert');
+
+  alertBox.textContent = "";
+
+  const { data, error } = await supabase1
+    .from('FacultyAuth')
+    .select()
+    .eq('Email', jEmail)
+    .maybeSingle();
+
+  if (error) {
+    alertBox.textContent = error.message;
+    return;
+  }
+
+  if (!data) {
+    alertBox.textContent = "Email not found!";
+    return;
+  }
+
+  if (data.Password === jPass) {
+    sessionStorage.setItem("Email", data.Email);
+    sessionStorage.setItem("Professor", data.Professor);
+    sessionStorage.setItem("FacultyName", data.Name);
+    sessionStorage.setItem("FacultyDepartment", data.Department);
+    window.location.href =
+      data.Role === 'Admin' ? "admin.html" : "faculty.html";
+  } else {
+    alertBox.textContent = "Invalid Credentials!";
+  }
+}
+</script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+html,body{
+    height:100%;
+    overflow:hidden;
+    background:#0f0c29;
+}
+
+/* Animated Gradient Background */
+.animated-bg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:linear-gradient(-45deg,#0f0c29,#302b63,#24243e,#1a1a2e);
+    background-size:400% 400%;
+    animation:gradientMove 12s ease infinite;
+    z-index:-3;
+}
+
+@keyframes gradientMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* Particle Effect */
+.particles{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background-image:radial-gradient(#ffffff22 1px, transparent 1px);
+    background-size:40px 40px;
+    animation:moveParticles 60s linear infinite;
+    z-index:-2;
+}
+
+@keyframes moveParticles{
+    from{transform:translateY(0);}
+    to{transform:translateY(-1000px);}
+}
+
+/* Center Layout */
+.container{
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+/* Glass Card */
+.login-box{
+    width:430px;
+    max-width:100%;
+    padding:50px;
+    border-radius:25px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(25px);
+    border:1px solid rgba(255,255,255,0.15);
+    box-shadow:0 0 40px #6a00ff55;
+    animation:fadeIn 1s ease;
+    transition:0.4s;
+}
+
+.login-box:hover{
+    transform:translateY(-6px);
+    box-shadow:0 0 60px #00f7ff;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(40px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+.login-box h2{
+    text-align:center;
+    margin-bottom:35px;
+    color:#fff;
+    letter-spacing:2px;
+}
+
+/* Inputs */
+.field{
+    position:relative;
+    margin-bottom:30px;
+}
+
+.field input{
+    width:100%;
+    padding:15px 12px;
+    background:transparent;
+    border:none;
+    border-bottom:2px solid rgba(255,255,255,0.3);
+    color:#fff;
+    font-size:16px;
+    outline:none;
+    transition:0.3s;
+}
+
+.field input:focus{
+    border-bottom:2px solid #00f7ff;
+    box-shadow:0 8px 20px #00f7ff44;
+}
+
+.field label{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#bbb;
+    pointer-events:none;
+    transition:0.3s;
+}
+
+.field input:focus + label,
+.field input:valid + label{
+    top:-10px;
+    font-size:12px;
+    color:#00f7ff;
+}
+
+/* Button */
+.login-btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:50px;
+    background:linear-gradient(135deg,#6a00ff,#00f7ff);
+    color:#fff;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.4s;
+}
+
+.login-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 0 25px #00f7ff;
+}
+
+/* Alert */
+#alert{
+    margin-top:20px;
+    text-align:center;
+    color:#ff4d6d;
+    min-height:20px;
+}
+
+/* Footer */
+.footer{
+    text-align:center;
+    margin-top:25px;
+    color:#aaa;
+    font-size:13px;
+}
+
+/* Responsive */
+@media(max-width:480px){
+    .login-box{
+        padding:35px 25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="animated-bg"></div>
+<div class="particles"></div>
+
+<div class="container">
+    <div class="login-box">
+        <h2>Faculty Login</h2>
+
+        <div class="field">
+            <input type="email" id="email" required>
+            <label>Email Address</label>
+        </div>
+
+        <div class="field">
+            <input type="password" id="pass" required>
+            <label>Password</label>
+        </div>
+
+        <button class="login-btn" onclick="Lg()">LOGIN</button>
+
+        <div id="alert"></div>
+
+        <div class="footer">
+            Smart Attendance & Parent Notification System
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
