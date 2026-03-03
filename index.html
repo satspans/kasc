@@ -4,10 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Attendance - Ultra UI</title>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
+var authema = localStorage.getItem('Email');
+if(authema){
+  window.location.href = "faculty.html";
+}
+
 var SUPABASE_URL="https://snowy-limit-4fdf.satspans.workers.dev";
 var SUPABASE_KEY="sb_publishable_i0HnA_T0MaU3M5z_qN_Grg_YaGpDgvf";
 
@@ -37,15 +42,32 @@ async function Lg() {
   }
 
   if (data.Password === jPass) {
-    sessionStorage.setItem("Email", data.Email);
-    sessionStorage.setItem("Professor", data.Professor);
-    sessionStorage.setItem("FacultyName", data.Name);
-    sessionStorage.setItem("FacultyDepartment", data.Department);
+    localStorage.setItem("Email", data.Email);
+    localStorage.setItem("Professor", data.Professor);
+    localStorage.setItem("FacultyName", data.Name);
+    localStorage.setItem("FacultyDepartment", data.Department);
     window.location.href =
       data.Role === 'Admin' ? "admin.html" : "faculty.html";
   } else {
     alertBox.textContent = "Invalid Credentials!";
   }
+}
+
+function togglePassword(){
+    const passwordInput = document.getElementById("pass");
+    const icon = document.querySelector(".toggle-password");
+
+    if(passwordInput.type === "password"){
+        passwordInput.type = "text";
+        
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    } else {
+        passwordInput.type = "password";
+        
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    }
 }
 </script>
 
@@ -176,6 +198,20 @@ html,body{
     color:#00f7ff;
 }
 
+.toggle-password{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#bbb;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.3s;
+}
+
+.toggle-password:hover{
+    color:#00f7ff;
+}
 /* Button */
 .login-btn{
     width:100%;
@@ -235,9 +271,10 @@ html,body{
         </div>
 
         <div class="field">
-            <input type="password" id="pass" required>
-            <label>Password</label>
-        </div>
+    <input type="password" id="pass" required>
+    <label>Password</label>
+    <i class="fa-solid fa-eye toggle-password" onclick="togglePassword()"></i>
+</div>
 
         <button class="login-btn" onclick="Lg()">LOGIN</button>
 

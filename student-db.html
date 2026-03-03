@@ -350,7 +350,7 @@ const supabase1 = supabase.createClient(
 );
 
 let users=[], filtered=[], current=null, isNew=false;
-const facultyEmailFromSession = sessionStorage.getItem('Email') || '';
+const facultyEmailFromSession = localStorage.getItem('Email') || '';
 
 async function fetchData(){
   const {data} = await supabase1.from("StudentDB").select("*");
@@ -423,7 +423,7 @@ function closeModal(e){
   if(!e || e.target===modal) modal.classList.remove('show'); 
 }
 
-function logout(){ sessionStorage.clear(); location.href="index.html"; }
+function logout(){ localStorage.clear(); location.href="index.html"; }
 
 function toggleSidebar(){
   document.getElementById("sidebar").classList.toggle("show");

@@ -74,7 +74,17 @@ form{backdrop-filter:blur(20px);background:rgba(255,255,255,0.05);padding:30px;b
 .status-btn{padding:8px 18px;border:none;border-radius:20px;font-weight:600;cursor:pointer;}
 .present{background:#00ff88;color:#000;}
 .absent{background:#ff4d4d;color:#fff;}
-
+a:-webkit-any-link {
+    color:#000;
+    background-color: #fff000;
+    padding:10px;
+    border-radius:5px;
+    border:1px solid #000;
+    text-align:center;
+    font-weight:bold;
+    cursor: pointer;
+    text-decoration: underline;
+}
 /* Responsive */
 @media(max-width:900px){
   body{grid-template-columns:1fr;}
@@ -177,11 +187,11 @@ form{backdrop-filter:blur(20px);background:rgba(255,255,255,0.05);padding:30px;b
     </form>
 
     <div id="studentList" style="margin-top:30px;"></div>
-
+<br><br><br><a id="smsLinks" style="margin-top:20px;"></a><br><br><br>
     <button id="smsBtn" class="action-btn" style="display:none;" onclick="sendParentSMS()">Parents SMS Notification</button>
     <button id="saveBtn" class="action-btn" style="display:none;" onclick="saveAttendance()">Save Attendance</button>
-
-    <a id="smsLinks" style="margin-top:20px;"></a>
+<br><br><br>
+    
   </div>
 </div>
 
@@ -191,7 +201,7 @@ const supabaseclient = supabase.createClient(
   "sb_publishable_i0HnA_T0MaU3M5z_qN_Grg_YaGpDgvf"
 );
 
-const facultyEmailFromSession = sessionStorage.getItem('Email') || '';
+const facultyEmailFromSession = localStorage.getItem('Email') || '';
 let attendanceData = [];
 var FacultyEmail = facultyEmailFromSession;
 
@@ -284,9 +294,9 @@ async function sendParentSMS() {
 
     const parentNumbers = parentsData.map(p => p.ParentsPhNo).join(",");
 
-    const Faculty_Name = sessionStorage.getItem("FacultyName")||"Faculty";
-    const Professor = sessionStorage.getItem("Professor")||"Professor";
-    const Faculty_Department = sessionStorage.getItem("FacultyDepartment")||"Department";
+    const Faculty_Name = localStorage.getItem("FacultyName")||"Faculty";
+    const Professor = localStorage.getItem("Professor")||"Professor";
+    const Faculty_Department = localStorage.getItem("FacultyDepartment")||"Department";
 
     const message = `
 Dear Parent,
@@ -308,7 +318,7 @@ Coimbatore - 641029`;
     smsContainer.appendChild(smsLink);
 }
 
-function logout(){ sessionStorage.clear(); location.href="index.html"; }
+function logout(){ localStorage.clear(); location.href="index.html"; }
 </script>
 
 </body>
