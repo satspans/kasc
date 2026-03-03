@@ -30,7 +30,7 @@ body{
   100%{background-position:0% 50%;}
 }
 
-/* ===== SIDEBAR ===== */
+/* SIDEBAR */
 .sidebar{
   backdrop-filter:blur(20px);
   background:rgba(255,255,255,0.05);
@@ -63,7 +63,7 @@ body{
   box-shadow:0 0 20px #00f7ff;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 .header{
   backdrop-filter:blur(20px);
   background:rgba(255,255,255,0.05);
@@ -85,7 +85,7 @@ body{
   cursor:pointer;
 }
 
-/* ===== CONTENT ===== */
+/* CONTENT */
 .content{padding:40px}
 
 input{
@@ -98,7 +98,7 @@ input{
   margin-bottom:15px;
 }
 
-/* ===== ULTRA SELECT ===== */
+/* SELECT */
 .select-wrapper{
   position:relative;
   margin-bottom:15px;
@@ -136,7 +136,7 @@ select option{
   color:#fff;
 }
 
-/* ===== TABLE ===== */
+/* TABLE */
 .table-wrapper{margin-top:20px}
 
 .table-header,
@@ -165,7 +165,7 @@ select option{
   box-shadow:0 0 25px #6a00ff55;
 }
 
-/* ===== BUTTONS ===== */
+/* BUTTONS */
 .action-btn{
   background:linear-gradient(135deg,#6a00ff,#00f7ff);
   border:none;
@@ -187,7 +187,7 @@ select option{
   background:linear-gradient(135deg,#ff004c,#ff4d4d);
 }
 
-/* ===== MODAL ===== */
+/* MODAL */
 .modal-overlay{
   position:fixed;
   inset:0;
@@ -210,10 +210,9 @@ select option{
 }
 
 .modal h2{margin-bottom:20px}
-
 .modal-actions{text-align:right}
 
-/* ===== RESPONSIVE ===== */
+/* RESPONSIVE */
 @media(max-width:1000px){
   body{grid-template-columns:1fr;}
   .sidebar{
@@ -231,7 +230,6 @@ select option{
 
 <body>
 
-<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="brand">FACULTY•CORE</div>
   <nav class="nav">
@@ -242,13 +240,36 @@ select option{
 
 <div class="main">
   <div class="header">
-    <button id="menuToggle" onclick="toggleSidebar()">☰</button>
-    <h1>Student DB Management</h1>
-    <div>
-      <button class="action-btn" onclick="openNew()">+ Add Student</button>
-      <button class="action-btn danger" onclick="logout()">Logout</button>
-    </div>
+  <button id="menuToggle" onclick="toggleSidebar()">☰</button>
+  <h1>Student DB Management</h1>
+  <div>
+    <button class="action-btn" onclick="openNew()">+ Add Student</button>
+
+    <!-- Import CSV Button -->
+    <button class="action-btn" onclick="document.getElementById('csvFile').click()">Import CSV</button>
+    <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="importCSV(event)">
+
+    <!-- Download Sample CSV Button -->
+    <button class="action-btn" onclick="downloadSampleCSV()">Download Sample CSV</button>
+
+    <button class="action-btn danger" onclick="logout()">Logout</button>
   </div>
+</div>
+
+<script>
+  // Download Sample CSV Function
+  function downloadSampleCSV(){
+    const headers = ["Name","Rollno","Class","Department","Section","ParentsPhNo"];
+    const csvContent = headers.join(",") + "\n";
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sample_students.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
 
   <div class="content">
     <input placeholder="Search..." oninput="search(this.value)">
@@ -271,10 +292,8 @@ select option{
 <div class="modal-overlay" id="modal" onclick="closeModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <h2>Add Student</h2>
-
     <input id="d_name" placeholder="Student name">
     <input id="d_rollno" placeholder="Roll No">
-
     <div class="select-wrapper">
       <select id="d_class">
         <option value="">Select Class</option>
@@ -285,47 +304,45 @@ select option{
         <option>PG II Year</option>
       </select>
     </div>
-
     <div class="select-wrapper">
       <select id="d_department">
-            <option value="">Select Department</option>
-          <option>Department of Tamil (AIDED)</option>
-          <option>Department of English (AIDED)</option>
-          <option>Department of Mathematics (AIDED)</option>
-          <option>Department of Physics (AIDED)</option>
-          <option>Department of Chemistry (AIDED)</option>
-          <option>Department of Botany (AIDED)</option>
-          <option>Department of Zoology (AIDED)</option>
-          <option>Department of Biochemistry (AIDED)</option>
-          <option>Department of Computer Science (AIDED)</option>
-          <option>Department of Tamil (SF)</option>
-          <option>Department of English (SF)</option>
-          <option>Department of Mathematics (SF)</option>
-          <option>Department of Biotechnology (SF)</option>
-          <option>Department of Chemistry (PG) (SF)</option>
-          <option>Department of Commerce (SF)</option>
-          <option>Department of Commerce CA (SF)</option>
-          <option>Department of Computer Science (SF)</option>
-          <option>Department of Computer Technology (SF)</option>
-          <option>Department of Computer Application (SF)</option>
-          <option>Department of Costume Design and Fashion (SF)</option>
-          <option>Department of Biochemistry (SF)</option>
-          <option>Department of Information Technology (SF)</option>
-          <option>Department of Business Administration with CA (SF)</option>
-          <option>Department of Commerce PA (SF)</option>
-          <option>Department of Commerce (PG) (SF)</option>
-          <option>Department of Commerce Banking & Insurance (SF)</option>
-          <option>Department of Commerce Accounting and Finance (SF)</option>
-          <option>Department of Psychology (SF)</option>
-          <option>Department of Computer Science with Data Analytics (SF)</option>
-          <option>Department of Artificial Intelligence and Machine Learning (SF)</option>
-          <option>Department of Commerce IT (SF)</option>
-          <option>Department of Commerce Business Analytics (SF)</option>
-          <option>Department of Clinical Nutrition (SF)</option>
-          <option>Department of Wildlife Biology (SF)</option>
+        <option value="">Select Department</option>
+        <option>Department of Tamil (AIDED)</option>
+        <option>Department of English (AIDED)</option>
+        <option>Department of Mathematics (AIDED)</option>
+        <option>Department of Physics (AIDED)</option>
+        <option>Department of Chemistry (AIDED)</option>
+        <option>Department of Botany (AIDED)</option>
+        <option>Department of Zoology (AIDED)</option>
+        <option>Department of Biochemistry (AIDED)</option>
+        <option>Department of Computer Science (AIDED)</option>
+        <option>Department of Tamil (SF)</option>
+        <option>Department of English (SF)</option>
+        <option>Department of Mathematics (SF)</option>
+        <option>Department of Biotechnology (SF)</option>
+        <option>Department of Chemistry (PG) (SF)</option>
+        <option>Department of Commerce (SF)</option>
+        <option>Department of Commerce CA (SF)</option>
+        <option>Department of Computer Science (SF)</option>
+        <option>Department of Computer Technology (SF)</option>
+        <option>Department of Computer Application (SF)</option>
+        <option>Department of Costume Design and Fashion (SF)</option>
+        <option>Department of Biochemistry (SF)</option>
+        <option>Department of Information Technology (SF)</option>
+        <option>Department of Business Administration with CA (SF)</option>
+        <option>Department of Commerce PA (SF)</option>
+        <option>Department of Commerce (PG) (SF)</option>
+        <option>Department of Commerce Banking & Insurance (SF)</option>
+        <option>Department of Commerce Accounting and Finance (SF)</option>
+        <option>Department of Psychology (SF)</option>
+        <option>Department of Computer Science with Data Analytics (SF)</option>
+        <option>Department of Artificial Intelligence and Machine Learning (SF)</option>
+        <option>Department of Commerce IT (SF)</option>
+        <option>Department of Commerce Business Analytics (SF)</option>
+        <option>Department of Clinical Nutrition (SF)</option>
+        <option>Department of Wildlife Biology (SF)</option>
       </select>
     </div>
-
     <div class="select-wrapper">
       <select id="d_mainadd">
         <option value="">Select Section</option>
@@ -333,9 +350,7 @@ select option{
         <option>Additional</option>
       </select>
     </div>
-
     <input id="d_parentph" placeholder="Parents Phone No">
-
     <div class="modal-actions">
       <button class="action-btn" onclick="save()">Save</button>
       <button class="action-btn danger" onclick="closeModal()">Cancel</button>
@@ -352,10 +367,24 @@ const supabase1 = supabase.createClient(
 let users=[], filtered=[], current=null, isNew=false;
 const facultyEmailFromSession = localStorage.getItem('Email') || '';
 
+// **MODAL ELEMENT REFERENCES**
+const modal = document.getElementById('modal');
+const d_name = document.getElementById('d_name');
+const d_rollno = document.getElementById('d_rollno');
+const d_class = document.getElementById('d_class');
+const d_department = document.getElementById('d_department');
+const d_mainadd = document.getElementById('d_mainadd');
+const d_parentph = document.getElementById('d_parentph');
+
 async function fetchData(){
-  const {data} = await supabase1.from("StudentDB").select("*");
+  const {data} = await supabase1
+    .from("StudentDB")
+    .select("*")
+    .eq("FacultyEmail", facultyEmailFromSession)
+    .order("Rollno",{ascending:true}); // ORDER BY ROLLNO
+
   users = data || [];
-  filtered = users.filter(u=>u.FacultyEmail===facultyEmailFromSession);
+  filtered = users;
   render();
 }
 
@@ -379,8 +408,10 @@ function render(){
 }
 
 function openNew(){ isNew=true; modal.classList.add('show'); clearModal(); }
-function edit(i){ 
-  isNew=false; current=filtered[i]; 
+
+function edit(i){
+  isNew=false;
+  current=filtered[i];
   d_name.value=current.Name;
   d_rollno.value=current.Rollno;
   d_class.value=current.Class;
@@ -405,17 +436,29 @@ async function save(){
     Section:d_mainadd.value,
     ParentsPhNo:d_parentph.value
   };
+
   if(isNew){
     await supabase1.from("StudentDB").insert([payload]);
   } else{
-    await supabase1.from("StudentDB").update(payload).eq("id",current.id);
+    await supabase1
+      .from("StudentDB")
+      .update(payload)
+      .eq("Rollno",current.Rollno)
+      .eq("FacultyEmail",facultyEmailFromSession);
   }
-  closeModal(); fetchData();
+
+  closeModal();
+  fetchData();
 }
 
 function delUser(r){
   if(confirm("Delete student?")){
-    supabase1.from("StudentDB").delete().eq("Rollno",r).then(fetchData);
+    supabase1
+      .from("StudentDB")
+      .delete()
+      .eq("Rollno",r)
+      .eq("FacultyEmail",facultyEmailFromSession)
+      .then(fetchData);
   }
 }
 
@@ -430,9 +473,46 @@ function toggleSidebar(){
 }
 
 function search(q){
-  filtered = users.filter(u=>u.FacultyEmail===facultyEmailFromSession &&
-    u.Name.toLowerCase().includes(q.toLowerCase()));
+  filtered = users.filter(u =>
+    u.Name.toLowerCase().includes(q.toLowerCase())
+  );
   render();
+}
+
+async function importCSV(event){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = async function(e){
+    const text = e.target.result;
+    const rows = text.split("\n").map(r=>r.trim()).filter(r=>r);
+    const headers = rows[0].split(",").map(h=>h.trim());
+
+    const students=[];
+    for(let i=1;i<rows.length;i++){
+      const values=rows[i].split(",").map(v=>v.trim());
+      let obj={};
+      headers.forEach((h,index)=>obj[h]=values[index]||"");
+
+      students.push({
+        FacultyEmail:facultyEmailFromSession,
+        Name:obj.Name,
+        Rollno:obj.Rollno,
+        Class:obj.Class,
+        Department:obj.Department,
+        Section:obj.Section,
+        ParentsPhNo:obj.ParentsPhNo
+      });
+    }
+
+    await supabase1.from("StudentDB").insert(students);
+    alert("CSV Imported Successfully!");
+    fetchData();
+  };
+
+  reader.readAsText(file);
 }
 
 fetchData();
